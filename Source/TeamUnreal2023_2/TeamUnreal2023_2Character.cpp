@@ -29,6 +29,7 @@ void ATeamUnreal2023_2Character::SetupStimulusSource()
 
 ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 {
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		

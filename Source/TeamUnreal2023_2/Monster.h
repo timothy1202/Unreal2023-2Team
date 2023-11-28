@@ -4,16 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Components/WidgetComponent.h"
-#include "Monster.generated.h"
 
-UENUM(BlueprintType)
-enum class EMonsterBehavior : uint8 {
-	NOTHING = 0 UMETA(DisplayName = "Nothing"),
-	CHASE UMETA(DisplayName = "Chase"),
-	ATTACK UMETA(DisplayName = "Attack"),
-	GOTHIT UMETA(DisplayName = "Gothit")
-};
+#include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "MonsterBehavior.h"
+
+#include "Monster.generated.h"
 
 UCLASS()
 class TEAMUNREAL2023_2_API AMonster : public ACharacter
@@ -23,6 +20,13 @@ class TEAMUNREAL2023_2_API AMonster : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMonster();
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TEnumAsByte<EMonsterBehavior> myBehavior;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* BehaviorWidget;
 
 protected:
 	// Called when the game starts or when spawned
@@ -41,9 +45,5 @@ public:
 
 	void SetUIRef();
 	void UILookCamera();
-
-private:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
-	UWidgetComponent* BehaviorWidget;
 	
 };
