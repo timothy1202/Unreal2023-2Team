@@ -9,6 +9,12 @@ AMonster::AMonster()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BehaviorWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("BehaviorWidget"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> BPUserWidget(L"Blueprint'/Game/ThirdPerson/Blueprints/BehaviorUI.BehaviorUI_C'");
+	if (BPUserWidget.Class != NULL)
+	{
+		BehaviorWidget->SetWidgetClass(BPUserWidget.Class);
+	}
 }
 
 // Called when the game starts or when spawned

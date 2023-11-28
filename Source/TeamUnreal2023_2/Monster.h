@@ -4,14 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/WidgetComponent.h"
 #include "Monster.generated.h"
 
-UENUM()
-enum Behavior {
-	NOTHING,
-	CHASE,
-	ATTACK,
-	GOTHIT
+UENUM(BlueprintType)
+enum class EMonsterBehavior : uint8 {
+	NOTHING = 0 UMETA(DisplayName = "Nothing"),
+	CHASE UMETA(DisplayName = "Chase"),
+	ATTACK UMETA(DisplayName = "Attack"),
+	GOTHIT UMETA(DisplayName = "Gothit")
 };
 
 UCLASS()
@@ -35,12 +36,14 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// 새로 추가한 함수
-	UFUNCTION(BlueprintImplementableEvent)
-	void SetUI(TEnumAsByte<Behavior> newBevior);
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "UI")
+	void SetUI(const EMonsterBehavior& newBevior);
 
 	void SetUIRef();
 	void UILookCamera();
 
 private:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* BehaviorWidget;
 	
 };
