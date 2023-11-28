@@ -10,9 +10,22 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include"Perception/AIPerceptionStimuliSourceComponent.h"
+#include"Perception/AISense_Sight.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // ATeamUnreal2023_2Character
+
+void ATeamUnreal2023_2Character::SetupStimulusSource()
+{
+	StimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	if (StimulusSource)
+	{
+		StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+		StimulusSource->RegisterWithPerceptionSystem();
+	}
+}
 
 ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 {
