@@ -5,6 +5,7 @@
 #include "NPC.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_sight.h"
+//#include "TeamUnreal2023_2Character.h"
 
 ANPCAIController::ANPCAIController(FObjectInitializer const& ObjectInitializer)
 {
@@ -51,7 +52,7 @@ void ANPCAIController::SetupPerceptionSystem()
 void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus)
 {
 	//플레이어가 보이는 지
-	if (auto* const = cast<ACppAITutorialCharacter>(Actor))
+	if (auto* const = cast<ATeamUnreal2023_2Character>(Actor))
 	{
 		// npc가 플레이어 위치를 잃으면 canseeplayer거짓 
 		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Stimulus.WasSuccessfullySensed());
