@@ -5,7 +5,8 @@
 #include "NPC.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_sight.h"
-//#include "TeamUnreal2023_2Character.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "TeamUnreal2023_2Character.h"
 
 ANPCAIController::ANPCAIController(FObjectInitializer const& ObjectInitializer)
 {
@@ -44,7 +45,7 @@ void ANPCAIController::SetupPerceptionSystem()
 		SightConfig->DetectionByAffiliation.bDetectNeutrals = true; // 중립 판단
 
 		GetPerceptionComponent()->SetDominantSense(*SightConfig->GetSenseImplementation());
-		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, ANPCAIController::OnTargetDetected);
+		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &ANPCAIController::OnTargetDetected);
 		GetPerceptionComponent()->ConfigureSense(*SightConfig);
 	}
 }
@@ -52,7 +53,7 @@ void ANPCAIController::SetupPerceptionSystem()
 void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus)
 {
 	//플레이어가 보이는 지
-	if (auto* const = cast<ATeamUnreal2023_2Character>(Actor))
+	if (ATeamUnreal2023_2Character* const ch = Cast<ATeamUnreal2023_2Character>(Actor))
 	{
 		// npc가 플레이어 위치를 잃으면 canseeplayer거짓 
 		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Stimulus.WasSuccessfullySensed());
