@@ -8,6 +8,18 @@ public class TeamUnreal2023_2 : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput" });
+		//이걸 안 넣으면 링크에러가 일어남
+		PublicDependencyModuleNames.AddRange(new string[] 
+		{
+			"Core",
+			"CoreUObject",
+			"Engine",
+			"InputCore",
+			"HeadMountedDisplay",
+			"EnhancedInput",
+			"AIModule",
+			"GameplayTasks",
+			"NavigationSystem"
+		});
 	}
 }

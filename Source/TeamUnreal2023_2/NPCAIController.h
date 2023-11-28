@@ -14,4 +14,9 @@ class TEAMUNREAL2023_2_API ANPCAIController : public AAIController
 {
 	GENERATED_BODY()
 	
+public:
+	explicit ANPCAIController(FObjectInitializer const& ObjectInitializer);
+
+protected:
+	virtual void OnPossess(APawn* InPawn) override;
 };
