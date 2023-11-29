@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "MonsterBehavior.h"
+#include "BehaviorUI.h"
 
 #include "Monster.generated.h"
 
@@ -23,10 +24,28 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	TEnumAsByte<EMonsterBehavior> myBehavior;
+	EMonsterBehavior myBehavior;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* BehaviorWidget;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	UBehaviorUI* behaviorUIRef;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
+	UTexture2D* nothingIcon;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
+	UTexture2D* chaseIcon;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
+	UTexture2D* attackIcon;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
+	UTexture2D* gothitIcon;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class ANPCAIController> myController;
 
 protected:
 	// Called when the game starts or when spawned
@@ -41,9 +60,10 @@ public:
 
 	// 새로 추가한 함수
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "UI")
-	void SetUI(const EMonsterBehavior& newBevior);
+	void SetUI(const EMonsterBehavior& bevior);
 
-	void SetUIRef();
+	inline void SetBehavior(EMonsterBehavior newBehavior) { myBehavior = newBehavior; }
+	inline EMonsterBehavior GetBehavior() { return myBehavior; }
+
 	void UILookCamera();
-	
 };

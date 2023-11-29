@@ -6,11 +6,20 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_sight.h"
 #include "BehaviorTree/BlackboardComponent.h"
+
 #include "TeamUnreal2023_2Character.h"
 
 ANPCAIController::ANPCAIController(FObjectInitializer const& ObjectInitializer)
 {
 	SetupPerceptionSystem(); 
+}
+
+void ANPCAIController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (ANPC* pawn = Cast<ANPC>(GetPawn()))
+		controlledPawn = pawn;
 }
 
 void ANPCAIController::OnPossess(APawn* InPawn)
@@ -26,6 +35,11 @@ void ANPCAIController::OnPossess(APawn* InPawn)
 			RunBehaviorTree(tree);
 		}
 	}
+}
+
+void ANPCAIController::Tick(float DeltaTime)
+{
+	this->SetUIOnBehaviorChange();
 }
 
 void ANPCAIController::SetupPerceptionSystem()
@@ -57,5 +71,14 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 	{
 		// npc가 플레이어 위치를 잃으면 canseeplayer거짓 
 		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Stimulus.WasSuccessfullySensed());
+	}
+}
+
+void ANPCAIController::SetUIOnBehaviorChange()
+{
+	if (controlledPawn->GetBehavior() != behavior)
+	{
+		behavior = controlledPawn->GetBehavior();
+		controlledPawn->SetUI(behavior);
 	}
 }

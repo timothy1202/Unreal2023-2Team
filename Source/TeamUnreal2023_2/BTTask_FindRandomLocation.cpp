@@ -7,6 +7,8 @@
 #include "NavigationSystem.h"
 #include "NPCAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "MonsterBehavior.h"
+#include "NPC.h"
 
 UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const& ObjectInitializer)
 {
@@ -15,6 +17,12 @@ UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	if (bool result = OwnerComp.GetAIOwner()->GetPawn()->IsA(ANPC::StaticClass()))
+	{
+		ANPC* controlledPawn = Cast<ANPC>(OwnerComp.GetAIOwner()->GetPawn());
+		controlledPawn->SetBehavior(EMonsterBehavior::NOTHING);
+	}
+
 	//get AI Conroller and its npc
 	if (auto* const cont = Cast<ANPCAIController>(OwnerComp.GetAIOwner())) //폰의 컨트롤러를 가져와서 트리를 가져옴
 	{
