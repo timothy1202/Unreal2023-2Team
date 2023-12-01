@@ -100,6 +100,9 @@ void ATeamUnreal2023_2Character::SetupPlayerInputComponent(class UInputComponent
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATeamUnreal2023_2Character::Look);
 
+		//Attack
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::Attack);
+
 	}
 
 }
@@ -138,6 +141,13 @@ void ATeamUnreal2023_2Character::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void ATeamUnreal2023_2Character::Attack()
+{
+	if (AttackMontage)
+		if(!(GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage)))
+			PlayAnimMontage(AttackMontage);
 }
 
 

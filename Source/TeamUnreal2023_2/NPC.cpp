@@ -2,6 +2,7 @@
 
 
 #include "NPC.h"
+#include "Components/CapsuleComponent.h"
 #include "NPCAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -22,6 +23,9 @@ ANPC::ANPC()
 
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, 270.0f, 0.0f));
+	
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreCameraPawn"));
+	GetMesh()->SetCollisionProfileName(TEXT("IgnoreCameraMesh"));
 
 	BehaviorWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("BehaviorWidget"));
 	BehaviorWidget->SetupAttachment(RootComponent);

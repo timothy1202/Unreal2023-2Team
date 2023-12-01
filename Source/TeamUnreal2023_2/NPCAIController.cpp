@@ -39,6 +39,8 @@ void ANPCAIController::OnPossess(APawn* InPawn)
 
 void ANPCAIController::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
 	this->SetUIOnBehaviorChange();
 }
 
