@@ -5,7 +5,6 @@
 #include "NPCAIController.h"
 
 #include "NavigationSystem.h"
-#include "NPCAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "MonsterBehavior.h"
 #include "NPC.h"
