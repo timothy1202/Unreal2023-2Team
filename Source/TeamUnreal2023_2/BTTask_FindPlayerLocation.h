@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
+#include "BTTask_MonsterBase.h"
 #include "BTTask_FindPlayerLocation.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMUNREAL2023_2_API UBTTask_FindPlayerLocation : public UBTTask_BlackboardBase
+class TEAMUNREAL2023_2_API UBTTask_FindPlayerLocation : public UBTTask_MonsterBase
 {
 	GENERATED_BODY()
 

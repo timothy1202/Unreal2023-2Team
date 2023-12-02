@@ -3,23 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
+#include "BehaviorTree/Tasks/BTTask_Wait.h"
 #include "MonsterBehavior.h"
-#include "BTTask_MonsterBase.generated.h"
+#include "BTTask_WaitBehavior.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMUNREAL2023_2_API UBTTask_MonsterBase : public UBTTask_BlackboardBase
+class TEAMUNREAL2023_2_API UBTTask_WaitBehavior : public UBTTask_Wait
 {
 	GENERATED_BODY()
-	
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Behavior", meta = (AllowPrivateAccess = "true"))
 	EMonsterBehavior newBehavior;
 
 protected:
-	bool SetMonsterBehavior(UBehaviorTreeComponent& OwnerComp);
-
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

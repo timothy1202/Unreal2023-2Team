@@ -19,10 +19,9 @@ UBTTask_FindPlayerLocation::UBTTask_FindPlayerLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (bool result = OwnerComp.GetAIOwner()->GetPawn()->IsA(ANPC::StaticClass()))
+	if (SetMonsterBehavior(OwnerComp) == false)
 	{
-		ANPC* controlledPawn = Cast<ANPC>(OwnerComp.GetAIOwner()->GetPawn());
-		controlledPawn->SetBehavior(EMonsterBehavior::CHASE);
+		UE_LOG(LogTemp, Warning, TEXT("Failed to set behavior!"));
 	}
 
 	//get player character

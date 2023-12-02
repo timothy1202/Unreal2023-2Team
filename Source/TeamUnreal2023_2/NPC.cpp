@@ -40,6 +40,10 @@ ANPC::ANPC()
 	if (t_nothingIcon.Object != NULL)
 		nothingIcon = t_nothingIcon.Object;
 
+	static ConstructorHelpers::FObjectFinder<UTexture2D> t_patrolIcon(L"Texture2D'/Game/Icons/patrol.patrol'");
+	if (t_patrolIcon.Object != NULL)
+		patrolIcon = t_patrolIcon.Object;
+
 	static ConstructorHelpers::FObjectFinder<UTexture2D> t_chaseIcon(L"Texture2D'/Game/Icons/chase.chase'");
 	if (t_chaseIcon.Object != NULL)
 		chaseIcon = t_chaseIcon.Object;
@@ -91,6 +95,9 @@ void ANPC::SetUI_Implementation(const EMonsterBehavior& behavior)
 	{
 	case EMonsterBehavior::NOTHING:
 		behaviorUIRef->SetIconAndText(nothingIcon, FText::FromString(""));
+		break;
+	case EMonsterBehavior::PATROL:
+		behaviorUIRef->SetIconAndText(patrolIcon, FText::FromString("Patrol"));
 		break;
 	case EMonsterBehavior::CHASE:
 		behaviorUIRef->SetIconAndText(chaseIcon, FText::FromString("Chase"));

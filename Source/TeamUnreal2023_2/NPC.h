@@ -37,6 +37,9 @@ private:
 	UTexture2D* nothingIcon;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
+	UTexture2D* patrolIcon;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* chaseIcon;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
