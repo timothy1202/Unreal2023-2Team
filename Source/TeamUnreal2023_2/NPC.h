@@ -76,7 +76,7 @@ public:
 	void UILookCamera();
 
 	// Setter, Getter함수 관련부분
-	inline void SetBehavior(EMonsterBehavior newBehavior) { myBehavior = newBehavior; }
-	inline EMonsterBehavior GetBehavior() { return myBehavior; }
-	UBehaviorTree* GetBehaviorTree() const;
+	FORCEINLINE void SetBehavior(EMonsterBehavior newBehavior) { myBehavior = newBehavior; }
+	FORCEINLINE EMonsterBehavior GetBehavior() const { return myBehavior; }
+	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return Tree; }
 };

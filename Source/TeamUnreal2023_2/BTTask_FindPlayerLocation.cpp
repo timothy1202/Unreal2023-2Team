@@ -2,7 +2,7 @@
 
 
 #include "BTTask_FindPlayerLocation.h"
-
+#include "BTFunction.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
@@ -19,7 +19,7 @@ UBTTask_FindPlayerLocation::UBTTask_FindPlayerLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (SetMonsterBehavior(OwnerComp) == false)
+	if (BTFunction::GetNPCAndSetBehavior(OwnerComp, GetNewBehavior()) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to set behavior!"));
 	}

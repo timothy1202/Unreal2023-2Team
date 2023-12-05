@@ -2,7 +2,6 @@
 
 
 #include "BTTask_ChasePlayer.h"
-
 #include "NPCAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"

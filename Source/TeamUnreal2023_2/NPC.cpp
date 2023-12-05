@@ -28,6 +28,7 @@ ANPC::ANPC()
 	GetMesh()->SetCollisionProfileName(TEXT("IgnoreCameraMesh"));
 
 	BehaviorWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("BehaviorWidget"));
+	BehaviorWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BehaviorWidget->SetupAttachment(RootComponent);
 	BehaviorWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 160.0f));
 	static ConstructorHelpers::FClassFinder<UUserWidget> BPUserWidget(L"Blueprint'/Game/ThirdPerson/Blueprints/BP_BehaviorUI.BP_BehaviorUI_C'");
@@ -119,9 +120,4 @@ void ANPC::UILookCamera()
 	FRotator newRotation = UKismetMathLibrary::FindLookAtRotation(UILocation, cameraLoction);
 
 	BehaviorWidget->SetWorldRotation(newRotation);
-}
-
-UBehaviorTree* ANPC::GetBehaviorTree()const
-{
-	return Tree;
 }

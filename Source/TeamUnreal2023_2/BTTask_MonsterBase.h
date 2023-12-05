@@ -20,6 +20,6 @@ private:
 	EMonsterBehavior newBehavior;
 
 protected:
-	bool SetMonsterBehavior(UBehaviorTreeComponent& OwnerComp);
+	FORCEINLINE EMonsterBehavior GetNewBehavior() { return newBehavior; }
 
 };

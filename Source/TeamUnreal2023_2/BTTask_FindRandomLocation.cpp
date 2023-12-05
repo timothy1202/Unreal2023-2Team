@@ -3,7 +3,7 @@
 
 #include "BTTask_FindRandomLocation.h"
 #include "NPCAIController.h"
-
+#include "BTFunction.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "MonsterBehavior.h"
@@ -16,7 +16,7 @@ UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	if (SetMonsterBehavior(OwnerComp) == false)
+	if (BTFunction::GetNPCAndSetBehavior(OwnerComp, GetNewBehavior()) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to set behavior!"));
 	}

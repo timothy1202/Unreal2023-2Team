@@ -3,6 +3,7 @@
 #include "TeamUnreal2023_2Character.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
@@ -32,6 +33,22 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+
+	// 오른손 주먹에다 콜리전 박스 할당
+	RightFistCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightFistCollisionBox"));
+	if (RightFistCollisionBox)
+	{
+		FAttachmentTransformRules const newRules
+		{
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			false
+		};
+		RightFistCollisionBox->AttachToComponent(GetMesh(), newRules, FName("hand_r_socket"));
+		RightFistCollisionBox->SetRelativeLocation(FVector(-7.f, 0.f, 0.f));
+		RightFistCollisionBox->SetBoxExtent(FVector(5.f), false);
+	}
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -80,6 +97,20 @@ void ATeamUnreal2023_2Character::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+}
+
+void ATeamUnreal2023_2Character::AttackStart()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
+	RightFistCollisionBox->SetCollisionProfileName("Fist");
+	RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
+}
+
+void ATeamUnreal2023_2Character::AttackEnd()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Finish!"));
+	RightFistCollisionBox->SetCollisionProfileName("NoCollision");
+	RightFistCollisionBox->SetNotifyRigidBodyCollision(false);
 }
 
 //////////////////////////////////////////////////////////////////////////

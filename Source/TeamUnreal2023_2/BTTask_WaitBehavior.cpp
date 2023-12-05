@@ -2,6 +2,7 @@
 
 
 #include "BTTask_WaitBehavior.h"
+#include "BTFunction.h"
 #include "AIController.h"
 #include "NPC.h"
 
@@ -9,21 +10,19 @@ EBTNodeResult::Type UBTTask_WaitBehavior::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	ANPC* controlledPawn = nullptr;
 
-	if (bool result = OwnerComp.GetAIOwner()->GetPawn()->IsA(ANPC::StaticClass()))
-		controlledPawn = Cast<ANPC>(OwnerComp.GetAIOwner()->GetPawn());
+	if (ANPC* pawn = BTFunction::GetControlledNPC(OwnerComp))
+		controlledPawn = pawn;
 	else
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 
 	EMonsterBehavior pawnBehavior = controlledPawn->GetBehavior();
 	if (pawnBehavior == EMonsterBehavior::CHASE)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Set"));
 		OwnerComp.GetAIOwner()->StopMovement();
-		controlledPawn->SetBehavior(newBehavior);
+		BTFunction::SetMonsterBehavior(*controlledPawn, newBehavior);
 	}
 	else if (pawnBehavior == EMonsterBehavior::PATROL)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not Set"));
 		return EBTNodeResult::Succeeded;
 	}
 
