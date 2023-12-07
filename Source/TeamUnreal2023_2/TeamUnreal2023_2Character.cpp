@@ -101,14 +101,14 @@ void ATeamUnreal2023_2Character::BeginPlay()
 
 void ATeamUnreal2023_2Character::AttackStart()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
 	RightFistCollisionBox->SetCollisionProfileName("Fist");
 	RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
 }
 
 void ATeamUnreal2023_2Character::AttackEnd()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Finish!"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Finish!"));
 	RightFistCollisionBox->SetCollisionProfileName("NoCollision");
 	RightFistCollisionBox->SetNotifyRigidBodyCollision(false);
 }
@@ -134,6 +134,10 @@ void ATeamUnreal2023_2Character::SetupPlayerInputComponent(class UInputComponent
 		//Attack
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::Attack);
 
+		//Focus
+		//시간 여유가 되면 C++로 추가할 예정
+		//카메라가 바라보고 있는 방향의 제일 가까운 적을 찾아서 포커싱
+		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::Focus);
 	}
 
 }

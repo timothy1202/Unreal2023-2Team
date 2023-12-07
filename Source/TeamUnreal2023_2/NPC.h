@@ -20,6 +20,9 @@ class TEAMUNREAL2023_2_API ANPC : public ACharacter
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* AttackRange;
+
 	// 적의 행동을 구분하기 위한 enum변수
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EMonsterBehavior myBehavior;
@@ -31,6 +34,14 @@ private:
 	// 위젯 컴포넌트에 할당된 위젯 레퍼런스 변수
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	UBehaviorUI* behaviorUIRef;
+
+	// Attack Montage
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* AttackMontage;
+
+	// Block Montage
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* GotHitMontage;
 
 	// 행동 아이콘 이미지 텍스쳐 레퍼런스들
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
@@ -52,6 +63,8 @@ private:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class ANPCAIController> myController;
 
+	bool isFindPlayer;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -68,6 +81,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	void OnBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	// 블루프린트 상속을 통해 재정의하는 함수 -> UI세팅 관련 코드들이 이 함수에 들어감
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "UI")
 	void SetUI(const EMonsterBehavior& behavior);
@@ -75,8 +91,13 @@ public:
 	// 행동UI가 플레이어 카메라를 바라보게 하기 위한 함수
 	void UILookCamera();
 
-	// Setter, Getter함수 관련부분
+	// Setter함수
 	FORCEINLINE void SetBehavior(EMonsterBehavior newBehavior) { myBehavior = newBehavior; }
+	FORCEINLINE void SetIsFindPlayer(bool isFind) { isFindPlayer = isFind; }
+
+	// Getter함수
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool GetIsFindPlayer() const { return isFindPlayer; }
 	FORCEINLINE EMonsterBehavior GetBehavior() const { return myBehavior; }
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return Tree; }
 };

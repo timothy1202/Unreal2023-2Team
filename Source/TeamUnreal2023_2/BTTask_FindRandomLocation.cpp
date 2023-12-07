@@ -16,6 +16,8 @@ UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	Super::ExecuteTask(OwnerComp, NodeMemory);
+
 	if (BTFunction::GetNPCAndSetBehavior(OwnerComp, GetNewBehavior()) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to set behavior!"));

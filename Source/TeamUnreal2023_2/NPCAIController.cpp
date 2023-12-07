@@ -25,7 +25,7 @@ void ANPCAIController::BeginPlay()
 void ANPCAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	if (ANPC* const npc = Cast< ANPC>(InPawn)) //이 폰이 npc 이면
+	if (ANPC* const npc = Cast<ANPC>(InPawn)) //이 폰이 npc 이면
 	{
 		if (UBehaviorTree* const tree = npc->GetBehaviorTree()) //폰의 트리를 가져옴
 		{
@@ -73,6 +73,11 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 	{
 		// npc가 플레이어 위치를 잃으면 canseeplayer거짓 
 		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Stimulus.WasSuccessfullySensed());
+		if (Stimulus.WasSuccessfullySensed())
+			controlledPawn->SetIsFindPlayer(true);
+		else
+			controlledPawn->SetIsFindPlayer(false);
+
 	}
 }
 
