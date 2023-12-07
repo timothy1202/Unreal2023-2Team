@@ -16,7 +16,12 @@ UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	Super::ExecuteTask(OwnerComp, NodeMemory);
+	if (Super::ExecuteTask(OwnerComp, NodeMemory) == EBTNodeResult::InProgress)
+		return EBTNodeResult::InProgress;
+
+	// 음영준 - 만약 Focus된 상태에서 넘어왔다면 AI포커스 해제
+	if (OwnerComp.GetAIOwner()->GetFocusActor())
+		OwnerComp.GetAIOwner()->ClearFocus(EAIFocusPriority::Gameplay);
 
 	if (BTFunction::GetNPCAndSetBehavior(OwnerComp, GetNewBehavior()) == false)
 	{

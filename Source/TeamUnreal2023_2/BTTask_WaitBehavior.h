@@ -8,7 +8,7 @@
 #include "BTTask_WaitBehavior.generated.h"
 
 /**
- * 
+ * 음영준 - 플레이어를 놓치면 BT에서 설정한 시간만큼 가만히 있게 하는 Task
  */
 UCLASS()
 class TEAMUNREAL2023_2_API UBTTask_WaitBehavior : public UBTTask_Wait

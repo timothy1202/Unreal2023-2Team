@@ -10,7 +10,8 @@ void UPlayerAttackAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	{
 		if (ATeamUnreal2023_2Character* const character = Cast<ATeamUnreal2023_2Character>(MeshComp->GetOwner()))
 		{
-			character->AttackStart();
+			// 음영준 - 몽타주에서 시작했다는 것을 알릴 시 플레이어의 Fist콜리전 활성화
+			character->AttackCollisionEnable();
 		}
 	}
 }
@@ -21,7 +22,8 @@ void UPlayerAttackAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, U
 	{
 		if (ATeamUnreal2023_2Character* const character = Cast<ATeamUnreal2023_2Character>(MeshComp->GetOwner()))
 		{
-			character->AttackEnd();
+			// 음영준 - 몽타주에서 끝났다는 것을 알릴 시 플레이어의 Fist콜리전 비활성화
+			character->AttackCollisionDisable();
 		}
 	}
 }

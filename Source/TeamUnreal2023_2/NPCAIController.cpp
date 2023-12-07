@@ -71,9 +71,14 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 	//플레이어가 보이는 지
 	if (ATeamUnreal2023_2Character* const ch = Cast<ATeamUnreal2023_2Character>(Actor))
 	{
+		// 음영준 - 플레이어 감지 성공 여부를 저장
+		bool Sensed = Stimulus.WasSuccessfullySensed();
+
 		// npc가 플레이어 위치를 잃으면 canseeplayer거짓 
-		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Stimulus.WasSuccessfullySensed());
-		if (Stimulus.WasSuccessfullySensed())
+		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Sensed);
+
+		// 음영준 - 플레이어가 보이는지 안보이는지에 따라 IsFindPlayer의 Bool값 설정
+		if (Sensed)
 			controlledPawn->SetIsFindPlayer(true);
 		else
 			controlledPawn->SetIsFindPlayer(false);
@@ -83,6 +88,7 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 
 void ANPCAIController::SetUIOnBehaviorChange()
 {
+	// 음영준 - 자신이 조종하고있는 AI의 행동을 가져와서 자신의 행동이랑 비교
 	if (controlledPawn->GetBehavior() != behavior)
 	{
 		behavior = controlledPawn->GetBehavior();

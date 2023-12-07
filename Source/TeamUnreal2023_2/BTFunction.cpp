@@ -17,8 +17,7 @@ ANPC* BTFunction::GetControlledNPC(UBehaviorTreeComponent& OwnerComp)
 
 void BTFunction::SetMonsterBehavior(ANPC& npc, EMonsterBehavior newBehavior)
 {
-	if(npc.GetBehavior() != EMonsterBehavior::GOTHIT)
-		npc.SetBehavior(newBehavior);
+	npc.SetBehavior(newBehavior);
 }
 
 bool BTFunction::GetNPCAndSetBehavior(UBehaviorTreeComponent& OwnerComp, EMonsterBehavior newBehavior)

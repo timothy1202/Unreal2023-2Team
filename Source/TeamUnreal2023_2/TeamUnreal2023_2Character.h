@@ -23,6 +23,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+	// 음영준 - 플레이어 Attack Montage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* AttackMontage;
 	
@@ -42,13 +43,15 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
-	// Attack Action
+	// 음영준 - Attack Action -> 플레이어 공격 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* AttackAction;
 
+	// 음영준 - Focus Action -> 시간 여유가 되면 추가 될 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* FocusAction;
 
+	// 음영준 - RightFistCollisionBox -> 플레이어 공격 시 잠시 활성화되는 박스콜리전
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* RightFistCollisionBox;
 
@@ -68,8 +71,10 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
+	// 음영준 - Attack기능이 탑재된 함수(Attack Action에 바인딩 됨)
 	void Attack();
 
+	// 음영준 - Focus기능이 탑재된 함수(Focus Action에 바인딩 됨)
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = Input)
 	void Focus();
 
@@ -85,8 +90,10 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	void AttackStart();
+	// 음영준 - Attack시 RightFistCollision활성화 (Player Attack Montage에 탑재된 PlayerAttackAnimNotifyState클래스에서 호출됨)
+	void AttackCollisionEnable();
 
-	void AttackEnd();
+	// 음영준 - Attack이 끝날 시 RightFistCollision비활성화 (Player Attack Montage에 탑재된 PlayerAttackAnimNotifyState클래스에서 호출됨)
+	void AttackCollisionDisable();
 };
 
