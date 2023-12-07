@@ -6,7 +6,6 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_sight.h"
 #include "BehaviorTree/BlackboardComponent.h"
-
 #include "TeamUnreal2023_2Character.h"
 
 ANPCAIController::ANPCAIController(FObjectInitializer const& ObjectInitializer)
@@ -20,6 +19,8 @@ void ANPCAIController::BeginPlay()
 
 	if (ANPC* pawn = Cast<ANPC>(GetPawn()))
 		controlledPawn = pawn;
+
+	GetBlackboardComponent()->SetValueAsBool("CanSummon", true);
 }
 
 void ANPCAIController::OnPossess(APawn* InPawn)
