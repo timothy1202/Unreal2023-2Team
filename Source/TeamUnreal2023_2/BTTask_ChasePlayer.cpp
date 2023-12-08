@@ -13,7 +13,8 @@ UBTTask_ChasePlayer::UBTTask_ChasePlayer(FObjectInitializer const& ObjectInitial
 
 EBTNodeResult::Type UBTTask_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	Super::ExecuteTask(OwnerComp, NodeMemory);
+	if (Super::ExecuteTask(OwnerComp, NodeMemory) == EBTNodeResult::InProgress)
+		return EBTNodeResult::InProgress;
 
 	if (auto* const cont = Cast<ANPCAIController>(OwnerComp.GetAIOwner()))
 	{

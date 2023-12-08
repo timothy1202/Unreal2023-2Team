@@ -6,6 +6,9 @@
 #include "Components/SphereComponent.h"
 #include "NPCAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "TeamUnreal2023_2Character.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 ANPC::ANPC()
@@ -16,6 +19,11 @@ ANPC::ANPC()
 	// AI공격범위 Attach
 	AttackRange = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRange"));
 	AttackRange->SetupAttachment(GetMesh());
+	
+	// AI공격범위 위치 및 범위, 프로필설정
+	AttackRange->SetRelativeLocation(FVector(0.0f, 0.0f, 90.0f));
+	AttackRange->InitSphereRadius(50.0f);
+	AttackRange->SetCollisionProfileName(TEXT("AttackRange"));
 
 	// 컨트롤러 회전 사용X
 	bUseControllerRotationPitch = false;
@@ -79,8 +87,10 @@ ANPC::ANPC()
 	static ConstructorHelpers::FObjectFinder<UTexture2D> t_gothitIcon(L"Texture2D'/Game/Icons/gothit.gothit'");
 	if (t_gothitIcon.Object != NULL)
 		gothitIcon = t_gothitIcon.Object;
+
+	AttackRange->SetGenerateOverlapEvents(true);
 	
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ANPC::OnBeginOverlap);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ANPC::OnBeginOverlapAttack);
 
 	myController = ANPCAIController::StaticClass();
 	AIControllerClass = myController;
@@ -100,6 +110,9 @@ void ANPC::BeginPlay()
 	{
 		behaviorUIRef = ref;
 	}
+
+	AttackRange->OnComponentBeginOverlap.AddDynamic(this, &ANPC::OnBeginOverlapPlayer);
+	AttackRange->OnComponentEndOverlap.AddDynamic(this, &ANPC::OnEndOverlapPlayer);
 }
 
 // Called every frame
@@ -117,12 +130,33 @@ void ANPC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void ANPC::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ANPC::OnBeginOverlapAttack(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherComp->GetCollisionProfileName() == FName("Fist"))
 	{
 		if (GotHitMontage)
-			PlayAnimMontage(GotHitMontage);
+		{
+			SetBehavior(EMonsterBehavior::GOTHIT);
+			PlayMontageOnBehavior(EMonsterBehavior::GOTHIT);
+		}
+	}
+}
+
+void ANPC::OnBeginOverlapPlayer(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherComp->ComponentHasTag("Player"))
+	{
+		UAIBlueprintHelperLibrary::GetAIController(this)->GetBlackboardComponent()->SetValueAsObject("TargetActor", OtherActor);
+		UAIBlueprintHelperLibrary::GetAIController(this)->GetBlackboardComponent()->SetValueAsBool("InAttackRange", true);
+	}
+}
+
+void ANPC::OnEndOverlapPlayer(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherComp->ComponentHasTag("Player"))
+	{
+		UAIBlueprintHelperLibrary::GetAIController(this)->GetBlackboardComponent()->SetValueAsObject("TargetActor", nullptr);
+		UAIBlueprintHelperLibrary::GetAIController(this)->GetBlackboardComponent()->SetValueAsBool("InAttackRange", false);
 	}
 }
 
@@ -151,9 +185,30 @@ void ANPC::SetUI_Implementation(const EMonsterBehavior& behavior)
 void ANPC::UILookCamera()
 {
 	FVector UILocation = BehaviorWidget->GetComponentLocation();
-	FVector cameraLoction = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
+	FVector cameraLocation = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0)->GetCameraLocation();
 
-	FRotator newRotation = UKismetMathLibrary::FindLookAtRotation(UILocation, cameraLoction);
+	FRotator newRotation = UKismetMathLibrary::FindLookAtRotation(UILocation, cameraLocation);
 
 	BehaviorWidget->SetWorldRotation(newRotation);
+}
+
+void ANPC::PlayMontageOnBehavior(EMonsterBehavior behavior)
+{
+	switch (behavior)
+	{
+	case EMonsterBehavior::ATTACK:
+		PlayAnimMontage(AttackMontage);
+		break;
+	case EMonsterBehavior::GOTHIT:
+		PlayAnimMontage(GotHitMontage);
+		break;
+	}
+}
+
+bool ANPC::IsPlayingMontage()
+{
+	if (GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage) || GetMesh()->GetAnimInstance()->Montage_IsPlaying(GotHitMontage))
+		return true;
+	else
+		return false;
 }

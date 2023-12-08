@@ -34,7 +34,7 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	// 오른손 주먹에다 콜리전 박스 할당
+	// 음염준 - 오른손 주먹에다 콜리전 박스 할당
 	RightFistCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RightFistCollisionBox"));
 	if (RightFistCollisionBox)
 	{
@@ -99,14 +99,14 @@ void ATeamUnreal2023_2Character::BeginPlay()
 	}
 }
 
-void ATeamUnreal2023_2Character::AttackStart()
+void ATeamUnreal2023_2Character::AttackCollisionEnable()
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
 	RightFistCollisionBox->SetCollisionProfileName("Fist");
 	RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
 }
 
-void ATeamUnreal2023_2Character::AttackEnd()
+void ATeamUnreal2023_2Character::AttackCollisionDisable()
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Finish!"));
 	RightFistCollisionBox->SetCollisionProfileName("NoCollision");

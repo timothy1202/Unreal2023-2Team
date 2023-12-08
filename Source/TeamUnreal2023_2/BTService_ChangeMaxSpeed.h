@@ -7,7 +7,7 @@
 #include "BTService_ChangeMaxSpeed.generated.h"
 
 /**
- * 
+ * 음영준 - AI의 Speed를 결정해주는 BT서비스
  */
 UCLASS()
 class TEAMUNREAL2023_2_API UBTService_ChangeMaxSpeed : public UBTService_BlackboardBase
@@ -16,7 +16,7 @@ class TEAMUNREAL2023_2_API UBTService_ChangeMaxSpeed : public UBTService_Blackbo
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	float speed = 400.f;
+	float speed;
 
 public:
 	UBTService_ChangeMaxSpeed();

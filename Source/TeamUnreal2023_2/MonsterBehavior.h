@@ -3,6 +3,9 @@
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
 
+/// <summary>
+/// AI행동을 정의하는 enum 클래스
+/// </summary>
 UENUM(BlueprintType, Category = "Enums")
 enum class EMonsterBehavior : uint8
 {
