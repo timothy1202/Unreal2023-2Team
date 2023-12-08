@@ -22,4 +22,5 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf<class APawn> BP_PawnClass;
 	
+	
 };
