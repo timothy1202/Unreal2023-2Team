@@ -27,7 +27,7 @@ ANPC::ANPC()
 
 	// 컨트롤러 회전 사용X
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	// 무브먼트 방향으로 회전
