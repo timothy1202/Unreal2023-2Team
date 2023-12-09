@@ -30,6 +30,8 @@ void ATeamUnreal2023_2Character::SetupStimulusSource()
 
 ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 {
+	//¹Ú±¤ÈÆ - ÇÃ·¹ÀÌ Åõ¸í À¯¹Â ÃÊ±âÈ­
+	IsInvisible = false;
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -97,6 +99,39 @@ void ATeamUnreal2023_2Character::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	/// <summary>
+	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÄÄÆ÷³ÍÆ®°¡ ÀÖÀ¸¸é
+	/// </summary>
+	if (OverlapComponent != nullptr)
+	{
+		OverlapComponent->OnComponentBeginOverlap.AddDynamic(this, &ATeamUnreal2023_2Character::HandleOverlap);
+	}
+}
+
+/// <summary>
+/// ¹Ú°­ÈÆ - ¿À¹ö·¦ ÇÔ¼ö
+/// </summary>
+/// <param name="OverlappedComponent"></param>
+/// <param name="OtherActor"></param>
+/// <param name="OtherComp"></param>
+/// <param name="OtherBodyIndex"></param>
+/// <param name="bFromSweep"></param>
+/// <param name="SweepResult"></param>
+void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	/*if (OtherActor->IsA(AInvisibleMarble::StaticClass()))
+	{
+		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
+	}*/
+}
+
+/// <summary>
+/// ¹Ú±¤ÈÆ - µô·¹ÀÌ ÈÄ ½ÇÇà ÇÔ¼ö
+/// </summary>
+void ATeamUnreal2023_2Character::DelayPlay()
+{
+	IsInvisible = false;
 }
 
 void ATeamUnreal2023_2Character::AttackCollisionEnable()

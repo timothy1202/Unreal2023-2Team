@@ -60,6 +60,31 @@ private:
 	void SetupStimulusSource();
 
 public:
+	/// <summary>
+	/// ¹Ú±¤ÈÆ - Ä³¸¯ÅÍ Åõ¸í À¯¹«
+	/// </summary>
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	bool IsInvisible;
+
+	/// <summary>
+	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÄÄÆ÷³ÍÆ®
+	/// </summary>
+	UPROPERTY(VisibleAnywhere)
+	class UShapeComponent* OverlapComponent;
+
+	/// <summary>
+	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÇÔ¼ö
+	/// </summary>
+	UFUNCTION()
+	void HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	/// <summary>
+	/// ¹Ú±¤ÈÆ - µô·¹ÀÌ
+	/// </summary>
+	FTimerHandle DelayTimerHandle;
+
+	void DelayPlay();
+
 	ATeamUnreal2023_2Character();
 	
 
