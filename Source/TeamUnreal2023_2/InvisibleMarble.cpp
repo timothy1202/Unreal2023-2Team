@@ -29,11 +29,11 @@ AInvisibleMarble::AInvisibleMarble()
     SphereComponent->SetSphereRadius(50.f);
 
     // ¹Ú±¤ÈÆ - ±¸ ¸ÓÆ¼¸®¾ó ¼³Á¤
-    static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAsset(TEXT(" / Script / Engine.MaterialInstanceConstant'/Game/Characters/Mannequin_UE4/Materials/M_MannequinUE4_ChestLogo.M_MannequinUE4_ChestLogo'"));
+    static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAsset(TEXT("/Game/NewMaterial.NewMaterial"));
     if (MaterialAsset.Succeeded())
     {
         MyMaterial = MaterialAsset.Object;
-        SphereComponent->SetMaterial(0, MyMaterial);
+        ShpereMesh->SetMaterial(0, MyMaterial);
     }
 
     // ¹Ú±¤ÈÆ - ¿¡¼Â ºÒ·¯¿À±â
