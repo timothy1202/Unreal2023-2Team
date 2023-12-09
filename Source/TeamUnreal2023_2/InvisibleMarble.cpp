@@ -37,7 +37,7 @@ AInvisibleMarble::AInvisibleMarble()
     }
 
     // ¹Ú±¤ÈÆ - ¿¡¼Â ºÒ·¯¿À±â
-    static ConstructorHelpers::FClassFinder<AActor> BPThirdPersonCharacterClassFinder(TEXT("/Script/Engine.Blueprint'/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter'"));
+    static ConstructorHelpers::FClassFinder<AActor> BPThirdPersonCharacterClassFinder(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter'"));
     if (BPThirdPersonCharacterClassFinder.Succeeded())
     {
         BPThirdPersonCharacterClass = BPThirdPersonCharacterClassFinder.Class;
