@@ -34,14 +34,11 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 {
 	// ¹Ú±¤ÈÆ - ¿À¹ö·¦ 
 	OverlapComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapComponent"));
-	if (OverlapComponent)
-	{
 		// RootComponent¿¡ ¿¬°á
 		OverlapComponent->SetupAttachment(RootComponent);
 
 		// ¿À¹ö·¦ ÀÌº¥Æ® È°¼ºÈ­
 		OverlapComponent->SetGenerateOverlapEvents(true);
-	}
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
