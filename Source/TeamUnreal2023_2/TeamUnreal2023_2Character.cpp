@@ -31,6 +31,16 @@ void ATeamUnreal2023_2Character::SetupStimulusSource()
 
 ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 {
+	// ¹Ú±¤ÈÆ - ¿À¹ö·¦ 
+	OverlapComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapComponent"));
+	if (OverlapComponent)
+	{
+		// RootComponent¿¡ ¿¬°á
+		OverlapComponent->SetupAttachment(RootComponent);
+
+		// ¿À¹ö·¦ ÀÌº¥Æ® È°¼ºÈ­
+		OverlapComponent->SetGenerateOverlapEvents(true);
+	}
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -120,7 +130,7 @@ void ATeamUnreal2023_2Character::Tick(float DeltaTime)
 }
 
 /// <summary>
-/// ¹Ú°­ÈÆ - ¿À¹ö·¦ ÇÔ¼ö
+/// ¹Ú°­ÈÆ - ±¸½½ ¿À¹ö·¦ ÇÔ¼ö
 /// </summary>
 /// <param name="OverlappedComponent"></param>
 /// <param name="OtherActor"></param>
@@ -130,13 +140,13 @@ void ATeamUnreal2023_2Character::Tick(float DeltaTime)
 /// <param name="SweepResult"></param>
 void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AInvisibleMarble* MarbleActor = Cast<AInvisibleMarble>(OtherActor);
-	if (MarbleActor)
+	if (OtherComp->ComponentHasTag("InvisibleMarble"))
 	{
 		IsInvisible = true;
 		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
 		UE_LOG(LogTemp, Warning, TEXT("1222e here."));
 	}
+
 }
 
 //¹Ú±¤ÈÆ - ÇÃ·¹ÀÌ Åõ¸í À¯¹Â ÃÊ±âÈ­

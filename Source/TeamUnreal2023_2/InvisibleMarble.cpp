@@ -3,6 +3,7 @@
 
 #include "InvisibleMarble.h"
 #include "Components/SphereComponent.h" //¹Ú±¤ÈÆ - ½ºÇÇ¾î Çì´õ Ãß°¡
+#include "Components/BoxComponent.h" // ¹Ú±¤ÈÆ - ¹Ú½º ÄÄÆ÷³ÍÆ® Ãß°¡
 
 // Sets default values
 AInvisibleMarble::AInvisibleMarble()
@@ -62,7 +63,7 @@ void AInvisibleMarble::Tick(float DeltaTime)
 
 void AInvisibleMarble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    if (OtherActor && (OtherActor != this) && OtherActor->GetClass() == BPThirdPersonCharacterClass)
+    if (OtherComp->ComponentHasTag("Player"))
     {
         Destroy();
     }

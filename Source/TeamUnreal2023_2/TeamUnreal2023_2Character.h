@@ -70,7 +70,7 @@ public:
 	/// <summary>
 	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÄÄÆ÷³ÍÆ®
 	/// </summary>
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	class UShapeComponent* OverlapComponent;
 
 	/// <summary>
