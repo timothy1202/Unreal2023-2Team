@@ -35,8 +35,7 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 	// ¹Ú±¤ÈÆ - ¿À¹ö·¦ 
 	OverlapComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapComponent"));
 		// RootComponent¿¡ ¿¬°á
-		OverlapComponent->SetupAttachment(RootComponent);
-
+		OverlapComponent->SetupAttachment(GetMesh());
 		// ¿À¹ö·¦ ÀÌº¥Æ® È°¼ºÈ­
 		OverlapComponent->SetGenerateOverlapEvents(true);
 
