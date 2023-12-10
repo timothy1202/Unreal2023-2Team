@@ -71,7 +71,7 @@ public:
 	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÄÄÆ÷³ÍÆ®
 	/// </summary>
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
-	class UShapeComponent* OverlapComponent;
+	class UBoxComponent* OverlapComponent;
 
 	/// <summary>
 	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÇÔ¼ö

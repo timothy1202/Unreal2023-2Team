@@ -12,6 +12,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InvisibleMarble.h"
 
+
 #include"Perception/AIPerceptionStimuliSourceComponent.h"
 #include"Perception/AISense_Sight.h"
 
@@ -109,13 +110,10 @@ void ATeamUnreal2023_2Character::BeginPlay()
 		}
 	}
 
-	/// <summary>
-	/// 박광훈 - 오버랩 컴포넌트가 있으면
-	/// </summary>
-	if (OverlapComponent != nullptr)
-	{
-		OverlapComponent->OnComponentBeginOverlap.AddDynamic(this, &ATeamUnreal2023_2Character::HandleOverlap);
-	}
+
+	OverlapComponent->OnComponentBeginOverlap.AddDynamic(this, &ATeamUnreal2023_2Character::HandleOverlap);
+
+
 }
 
 /// <summary>
@@ -142,14 +140,14 @@ void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedCo
 {
 	if (OtherComp->ComponentHasTag("InvisibleMarble"))
 	{
-		IsInvisible = true;
+		IsInvisible = true; 
+		UE_LOG(LogTemp, Warning, TEXT("Your message here."));
 		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
-		UE_LOG(LogTemp, Warning, TEXT("1222e here."));
 	}
 
 }
 
-//박광훈 - 플레이 투명 유뮤 초기화
+//박광훈 - 플레이 투명 유무 초기화
 bool ATeamUnreal2023_2Character::IsInvisible = false;
 
 /// <summary>
@@ -157,8 +155,7 @@ bool ATeamUnreal2023_2Character::IsInvisible = false;
 /// </summary>
 void ATeamUnreal2023_2Character::DelayPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Your message here."));
-	IsInvisible = true;
+	IsInvisible = false;
 }
 
 /// <summary>
@@ -168,20 +165,7 @@ void ATeamUnreal2023_2Character::SetInvisibility()
 {
 	if (IsInvisible == true)
 	{
-		//UStaticMeshComponent* MeshComponent = GetStaticMeshComponent(); // MeshComponent를 가져옵니다.
-		//UMaterialInterface* NewMaterial = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/NewMaterial.NewMaterial'")); // 새 머티리얼을 로드합니다.
-
-		//if (MeshComponent && NewMaterial)
-		//{
-		//	MeshComponent->SetMaterial(0, NewMaterial); // MeshComponent의 머티리얼을 변경합니다.
-		//}
-
-		//// 박광훈 - 스태틱 메쉬 로드
-		//static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshAsset(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
-		//if (StaticMeshAsset.Succeeded())
-		//{
-		//	ShpereMesh->SetStaticMesh(StaticMeshAsset.Object);
-		//}
+		
 	}
 	else
 	{

@@ -37,13 +37,6 @@ AInvisibleMarble::AInvisibleMarble()
         ShpereMesh->SetMaterial(0, MyMaterial);
     }
 
-    // ¹Ú±¤ÈÆ - ¿¡¼Â ºÒ·¯¿À±â
-    static ConstructorHelpers::FClassFinder<AActor> BPThirdPersonCharacterClassFinder(TEXT("/Game/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C"));
-    if (BPThirdPersonCharacterClassFinder.Succeeded())
-    {
-        BPThirdPersonCharacterClass = BPThirdPersonCharacterClassFinder.Class;
-    }
-
     SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AInvisibleMarble::OnOverlapBegin);
 }
 
