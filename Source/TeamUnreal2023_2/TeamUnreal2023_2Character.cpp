@@ -11,7 +11,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InvisibleMarble.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "NPC.h"
+#include "NPCAIController.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 #include"Perception/AIPerceptionStimuliSourceComponent.h"
 #include"Perception/AISense_Sight.h"
@@ -127,11 +130,11 @@ void ATeamUnreal2023_2Character::Tick(float DeltaTime)
 /// <param name="SweepResult"></param>
 void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Your message here."));
-
 	if (OtherComp->ComponentHasTag("InvisibleMarble"))
 	{
-		IsInvisible = true; 
+		IsInvisible = true;
+
+		UpdateInvisible(IsInvisible);
 		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
 	}
 
@@ -143,6 +146,7 @@ void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedCo
 void ATeamUnreal2023_2Character::DelayPlay()
 {
 	IsInvisible = false;
+	UpdateInvisible(IsInvisible);
 }
 
 /// <summary>
@@ -172,6 +176,22 @@ void ATeamUnreal2023_2Character::AttackCollisionDisable()
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Finish!"));
 	RightFistCollisionBox->SetCollisionProfileName("NoCollision");
 	RightFistCollisionBox->SetNotifyRigidBodyCollision(false);
+}
+
+/// <summary>
+/// 박광훈 - 모든 액터들의 투명화 적용
+/// </summary>
+/// <param name="isVisible"></param>
+void ATeamUnreal2023_2Character::UpdateInvisible(bool isVisible)
+{
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANPC::StaticClass(), OutActors);
+	for (AActor* outActor : OutActors)
+	{
+		ANPC* anpc = Cast<ANPC>(outActor);
+		ANPCAIController* npcAIControllerClass = Cast<ANPCAIController>(UAIBlueprintHelperLibrary::GetAIController(anpc));
+		npcAIControllerClass->MakeIsInvisibleFalse(isVisible);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

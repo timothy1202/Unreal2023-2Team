@@ -133,5 +133,7 @@ public:
 
 	// 음영준 - Attack이 끝날 시 RightFistCollision비활성화 (Player Attack Montage에 탑재된 PlayerAttackAnimNotifyState클래스에서 호출됨)
 	void AttackCollisionDisable();
+
+	void UpdateInvisible(bool isVisible);
 };
 

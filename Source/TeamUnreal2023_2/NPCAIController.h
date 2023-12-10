@@ -11,6 +11,7 @@
 /**
  * 
  */
+
 UCLASS()
 class TEAMUNREAL2023_2_API ANPCAIController : public AAIController
 {
@@ -43,4 +44,5 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	void MakeIsInvisibleFalse(bool what);
 };

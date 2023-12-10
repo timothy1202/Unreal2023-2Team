@@ -23,6 +23,7 @@ void ANPCAIController::BeginPlay()
 
 	// ¹Ú±¤ÈÆ - ¼ÒÈ¯ °¡´É À¯¹« ¼³Á¤
 	GetBlackboardComponent()->SetValueAsBool("CanSummon", true);
+
 }
 
 /// <summary>
@@ -80,6 +81,12 @@ void ANPCAIController::SetupPerceptionSystem()
 	}
 }
 
+void ANPCAIController::MakeIsInvisibleFalse(bool what)
+{
+	GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", !what);
+	controlledPawn->SetIsFindPlayer(!what);
+}
+
 /// <summary>
 /// ¹Ú±¤ÈÆ - NPC site ÇÔ¼ö
 /// </summary>
@@ -113,6 +120,8 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 
 	}
 }
+
+
 
 void ANPCAIController::SetUIOnBehaviorChange()
 {
