@@ -32,13 +32,6 @@ void ATeamUnreal2023_2Character::SetupStimulusSource()
 
 ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 {
-	// 박광훈 - 오버랩 
-	OverlapComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapComponent"));
-		// RootComponent에 연결
-		OverlapComponent->SetupAttachment(GetMesh());
-		// 오버랩 이벤트 활성화
-		OverlapComponent->SetGenerateOverlapEvents(true);
-
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -106,9 +99,9 @@ void ATeamUnreal2023_2Character::BeginPlay()
 		}
 	}
 
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ATeamUnreal2023_2Character::HandleOverlap);
 
-	OverlapComponent->OnComponentBeginOverlap.AddDynamic(this, &ATeamUnreal2023_2Character::HandleOverlap);
-
+	IsInvisible = false;
 
 }
 
@@ -134,17 +127,15 @@ void ATeamUnreal2023_2Character::Tick(float DeltaTime)
 /// <param name="SweepResult"></param>
 void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Your message here."));
+
 	if (OtherComp->ComponentHasTag("InvisibleMarble"))
 	{
 		IsInvisible = true; 
-		UE_LOG(LogTemp, Warning, TEXT("Your message here."));
 		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
 	}
 
 }
-
-//박광훈 - 플레이 투명 유무 초기화
-bool ATeamUnreal2023_2Character::IsInvisible = false;
 
 /// <summary>
 /// 박광훈 - 딜레이 후 실행 함수

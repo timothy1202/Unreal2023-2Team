@@ -92,7 +92,7 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 	{
 		bool Sensed;
 		// 박광훈 - 플레이어가 투명인지에 따른 감지 유무
-		if (ATeamUnreal2023_2Character::IsInvisible == true)
+		if (ch->GetIsInvisible() == true)
 		{
 			Sensed = false;
 		}

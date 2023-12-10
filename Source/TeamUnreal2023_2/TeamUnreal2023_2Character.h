@@ -59,19 +59,19 @@ private:
 
 	void SetupStimulusSource();
 
-public:
 	/// <summary>
 	/// ¹Ú±¤ÈÆ - Ä³¸¯ÅÍ Åõ¸í À¯¹«
 	/// </summary>
-	static bool IsInvisible;
+	bool IsInvisible;
 
+	
 
+public:
+	FORCEINLINE bool GetIsInvisible()
+	{
+		return IsInvisible;
+	}
 
-	/// <summary>
-	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÄÄÆ÷³ÍÆ®
-	/// </summary>
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
-	class UBoxComponent* OverlapComponent;
 
 	/// <summary>
 	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÇÔ¼ö
