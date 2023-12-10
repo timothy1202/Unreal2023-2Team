@@ -63,8 +63,9 @@ public:
 	/// <summary>
 	/// ¹Ú±¤ÈÆ - Ä³¸¯ÅÍ Åõ¸í À¯¹«
 	/// </summary>
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	bool IsInvisible;
+	static bool IsInvisible;
+
+
 
 	/// <summary>
 	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÄÄÆ÷³ÍÆ®
@@ -82,6 +83,18 @@ public:
 	/// ¹Ú±¤ÈÆ - µô·¹ÀÌ
 	/// </summary>
 	FTimerHandle DelayTimerHandle;
+
+	/// <summary>
+	/// ¹Ú±¤ÈÆ - ÇÃ·¹ÀÌ¾î Åõ¸íÀ¸·Î ¸¸µå´Â Ä¿½ºÅÒ ÀÌº¥Æ®
+	/// </summary>
+	UFUNCTION(BlueprintCallable, Category = "Custom")
+	void SetInvisibility();
+	
+	/// <summary>
+	/// ¹Ú±¤ÈÆ - Æ½ ÀÌº¥Æ® Ãß°¡
+	/// </summary>
+	virtual void Tick(float DeltaTime) override;
+
 
 	void DelayPlay();
 

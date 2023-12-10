@@ -8,6 +8,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "TeamUnreal2023_2Character.h"
 
+
 ANPCAIController::ANPCAIController(FObjectInitializer const& ObjectInitializer)
 {
 	SetupPerceptionSystem(); 
@@ -20,9 +21,14 @@ void ANPCAIController::BeginPlay()
 	if (ANPC* pawn = Cast<ANPC>(GetPawn()))
 		controlledPawn = pawn;
 
+	// 박광훈 - 소환 가능 유무 설정
 	GetBlackboardComponent()->SetValueAsBool("CanSummon", true);
 }
 
+/// <summary>
+/// 박광훈 - NPC 트리 설정 함수
+/// </summary>
+/// <param name="InPawn"></param>
 void ANPCAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
@@ -38,6 +44,10 @@ void ANPCAIController::OnPossess(APawn* InPawn)
 	}
 }
 
+/// <summary>
+/// 박광훈 - 틱 함수
+/// </summary>
+/// <param name="DeltaTime"></param>
 void ANPCAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -45,6 +55,9 @@ void ANPCAIController::Tick(float DeltaTime)
 	this->SetUIOnBehaviorChange();
 }
 
+/// <summary>
+/// 박광훈 - NPC 기본 설정 함수
+/// </summary>
 void ANPCAIController::SetupPerceptionSystem()
 {
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
@@ -67,15 +80,29 @@ void ANPCAIController::SetupPerceptionSystem()
 	}
 }
 
+/// <summary>
+/// 박광훈 - NPC site 함수
+/// </summary>
+/// <param name="Actor"></param>
+/// <param name="Stimulus"></param>
 void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus)
 {
 	//플레이어가 보이는 지
 	if (ATeamUnreal2023_2Character* const ch = Cast<ATeamUnreal2023_2Character>(Actor))
 	{
+		bool Sensed;
+		// 박광훈 - 플레이어가 투명인지에 따른 감지 유무
+		if (ATeamUnreal2023_2Character::IsInvisible == true)
+		{
+			Sensed = false;
+		}
+		else
+		{
+			Sensed = Stimulus.WasSuccessfullySensed();
+		}
 		// 음영준 - 플레이어 감지 성공 여부를 저장
-		bool Sensed = Stimulus.WasSuccessfullySensed();
 
-		// npc가 플레이어 위치를 잃으면 canseeplayer거짓 
+		// 박광훈 -npc가 플레이어 위치를 잃으면 canseeplayer거짓 
 		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Sensed);
 
 		// 음영준 - 플레이어가 보이는지 안보이는지에 따라 IsFindPlayer의 Bool값 설정

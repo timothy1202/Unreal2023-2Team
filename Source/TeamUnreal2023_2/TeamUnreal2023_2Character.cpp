@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InvisibleMarble.h"
 
 #include"Perception/AIPerceptionStimuliSourceComponent.h"
 #include"Perception/AISense_Sight.h"
@@ -30,8 +31,6 @@ void ATeamUnreal2023_2Character::SetupStimulusSource()
 
 ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 {
-	//박광훈 - 플레이 투명 유뮤 초기화
-	IsInvisible = false;
 
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -110,6 +109,17 @@ void ATeamUnreal2023_2Character::BeginPlay()
 }
 
 /// <summary>
+/// 박광훈 - 틱 이벤트
+/// </summary>
+/// <param name="DeltaTime"></param>
+void ATeamUnreal2023_2Character::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	SetInvisibility();
+}
+
+/// <summary>
 /// 박강훈 - 오버랩 함수
 /// </summary>
 /// <param name="OverlappedComponent"></param>
@@ -120,18 +130,53 @@ void ATeamUnreal2023_2Character::BeginPlay()
 /// <param name="SweepResult"></param>
 void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*if (OtherActor->IsA(AInvisibleMarble::StaticClass()))
+	AInvisibleMarble* MarbleActor = Cast<AInvisibleMarble>(OtherActor);
+	if (MarbleActor)
 	{
+		IsInvisible = true;
 		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
-	}*/
+		UE_LOG(LogTemp, Warning, TEXT("1222e here."));
+	}
 }
+
+//박광훈 - 플레이 투명 유뮤 초기화
+bool ATeamUnreal2023_2Character::IsInvisible = false;
 
 /// <summary>
 /// 박광훈 - 딜레이 후 실행 함수
 /// </summary>
 void ATeamUnreal2023_2Character::DelayPlay()
 {
-	IsInvisible = false;
+	UE_LOG(LogTemp, Warning, TEXT("Your message here."));
+	IsInvisible = true;
+}
+
+/// <summary>
+/// 플레이어 투명화 적용 (시각적으로)
+/// </summary>
+void ATeamUnreal2023_2Character::SetInvisibility()
+{
+	if (IsInvisible == true)
+	{
+		//UStaticMeshComponent* MeshComponent = GetStaticMeshComponent(); // MeshComponent를 가져옵니다.
+		//UMaterialInterface* NewMaterial = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/NewMaterial.NewMaterial'")); // 새 머티리얼을 로드합니다.
+
+		//if (MeshComponent && NewMaterial)
+		//{
+		//	MeshComponent->SetMaterial(0, NewMaterial); // MeshComponent의 머티리얼을 변경합니다.
+		//}
+
+		//// 박광훈 - 스태틱 메쉬 로드
+		//static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMeshAsset(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+		//if (StaticMeshAsset.Succeeded())
+		//{
+		//	ShpereMesh->SetStaticMesh(StaticMeshAsset.Object);
+		//}
+	}
+	else
+	{
+
+	}
 }
 
 void ATeamUnreal2023_2Character::AttackCollisionEnable()
