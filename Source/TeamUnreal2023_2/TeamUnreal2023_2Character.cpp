@@ -18,6 +18,7 @@
 
 #include"Perception/AIPerceptionStimuliSourceComponent.h"
 #include"Perception/AISense_Sight.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,7 +54,7 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 		RightFistCollisionBox->SetRelativeLocation(FVector(-7.f, 0.f, 0.f));
 		RightFistCollisionBox->SetBoxExtent(FVector(5.f), false);
 	}
-		
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -82,9 +83,12 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	//박광훈 - 글라이드 메쉬 할당
+	GliderMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GlidingMesh"));
+	GliderMesh->SetupAttachment(RootComponent);
 
 	SetupStimulusSource();
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
+	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
@@ -106,7 +110,10 @@ void ATeamUnreal2023_2Character::BeginPlay()
 
 	IsInvisible = false;
 
+	GliderMesh->SetVisibility(false);
+
 }
+
 
 /// <summary>
 /// 박광훈 - 틱 이벤트
@@ -116,6 +123,14 @@ void ATeamUnreal2023_2Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Delta = DeltaTime;
+
+	DescentPlayer();
+
+	if (GetCharacterMovement()->IsWalking() && IsGliding)
+	{
+		StopGliding();
+	}
 }
 
 /// <summary>
@@ -214,6 +229,122 @@ void ATeamUnreal2023_2Character::UpdateInvisible(bool isVisible)
 	}
 }
 
+/// <summary>
+/// 박광훈 - 글라이딩 함수
+/// </summary>
+void ATeamUnreal2023_2Character::Togglegliding()
+{
+	if (IsGliding == false)
+	{
+		StartGliding();
+	}
+	else
+	{
+		StopGliding();
+	}
+}
+
+/// <summary>
+/// 박광훈 - 글라이딩 시작 조건 함수
+/// </summary>
+void ATeamUnreal2023_2Character::StartGliding()
+{
+	//박광훈 - 글라이딩이 가능한지
+
+	if (CanStartGliding())
+	{
+		GliderMesh->SetVisibility(true);
+		CurrentVelocity = GetCharacterMovement()->Velocity;
+		IsGliding = true;
+		RecordOrignalSettings();
+
+		GetCharacterMovement()->RotationRate = FRotator(0.f, 250.f, 0.0f);
+		GetCharacterMovement()->GravityScale = 0.0;
+		GetCharacterMovement()->AirControl = 0.9;
+		GetCharacterMovement()->BrakingDecelerationFalling = 350.f;
+		GetCharacterMovement()->MaxAcceleration = 1024;
+		GetCharacterMovement()->MaxWalkSpeed = 600;
+		GetCharacterMovement()->bUseControllerDesiredRotation = true;
+
+	}
+}
+
+/// <summary>
+/// 박광훈 - 글라이딩 멈추는 함수
+/// </summary>
+void ATeamUnreal2023_2Character::StopGliding()
+{
+	ApplyOrignalSettings();
+	IsGliding = false;
+	GliderMesh->SetVisibility(false);
+}
+
+/// <summary>
+/// 박광훈 - 글라이딩 시작 함수
+/// </summary>
+/// <returns></returns>
+bool ATeamUnreal2023_2Character::CanStartGliding()
+{
+	FHitResult Hit;
+
+	FVector TraceStart = GetActorLocation();
+	FVector TraceEnd = GetActorLocation() + GetActorUpVector() * MinimumHeight * -1.f;
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	TEnumAsByte<ECollisionChannel> TraceProperties = ECC_Visibility;
+
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceProperties, QueryParams);
+
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, Hit.bBlockingHit ? FColor::Blue : FColor::Red);
+
+	if (Hit.bBlockingHit == false && GetCharacterMovement()->IsFalling() == true)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/// <summary>
+/// 박광훈 - 글라이딩 이전 세팅
+/// </summary>
+void ATeamUnreal2023_2Character::RecordOrignalSettings()
+{
+	OriginalOrientRotation = GetCharacterMovement()->bOrientRotationToMovement;
+	OriginalGravityScale = GetCharacterMovement()->GravityScale;
+	OriginalAirControl = GetCharacterMovement()->AirControl;
+	OriginalDecelration = GetCharacterMovement()->BrakingDecelerationFalling;
+	OriginalAcceleration = GetCharacterMovement()->MaxAcceleration;
+	OriginalWalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	OriginalDesiredRotation = GetCharacterMovement()->bUseControllerDesiredRotation;
+}
+
+void ATeamUnreal2023_2Character::DescentPlayer()
+{
+	if (CurrentVelocity.Z != DescendingRate * -1.f && IsGliding == true)
+	{
+		CurrentVelocity.Z = UKismetMathLibrary::FInterpTo(CurrentVelocity.Z, DescendingRate, Delta, 3.f);
+		GetCharacterMovement()->Velocity.Z = DescendingRate * -1.f;
+	}
+}
+
+void ATeamUnreal2023_2Character::ApplyOrignalSettings()
+{
+	GetCharacterMovement()->bOrientRotationToMovement = OriginalOrientRotation;
+	GetCharacterMovement()->GravityScale = OriginalGravityScale;
+	GetCharacterMovement()->AirControl = OriginalAirControl;
+	GetCharacterMovement()->BrakingDecelerationFalling = OriginalDecelration;
+	GetCharacterMovement()->MaxAcceleration = OriginalAcceleration;
+	GetCharacterMovement()->MaxWalkSpeed = OriginalWalkingSpeed;
+	GetCharacterMovement()->bUseControllerDesiredRotation = OriginalDesiredRotation;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
+
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -221,11 +352,12 @@ void ATeamUnreal2023_2Character::SetupPlayerInputComponent(class UInputComponent
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+
 		//Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
+		EnhancedInputComponent->BindAction(GlidingAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::Togglegliding);
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATeamUnreal2023_2Character::Move);
 
@@ -256,11 +388,11 @@ void ATeamUnreal2023_2Character::Move(const FInputActionValue& Value)
 
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-		// get right vector 
+
+		// get right vector
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
+		// add movement
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
@@ -282,10 +414,6 @@ void ATeamUnreal2023_2Character::Look(const FInputActionValue& Value)
 void ATeamUnreal2023_2Character::Attack()
 {
 	if (AttackMontage)
-		if(!(GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage)))
+		if (!(GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage)))
 			PlayAnimMontage(AttackMontage);
 }
-
-
-
-

@@ -9,7 +9,7 @@
 #include "TeamUnreal2023_2Character.generated.h"
 
 
-UCLASS(config=Game)
+UCLASS(config = Game)
 class ATeamUnreal2023_2Character : public ACharacter
 {
 	GENERATED_BODY()
@@ -17,43 +17,71 @@ class ATeamUnreal2023_2Character : public ACharacter
 private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+		class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+		class UCameraComponent* FollowCamera;
 
 	// 음영준 - 플레이어 Attack Montage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* AttackMontage;
-	
+		UAnimMontage* AttackMontage;
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* DefaultMappingContext;
+		class UInputMappingContext* DefaultMappingContext;
 
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* JumpAction;
+		class UInputAction* JumpAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* MoveAction;
+		class UInputAction* MoveAction;
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* LookAction;
+		class UInputAction* LookAction;
 
 	// 음영준 - Attack Action -> 플레이어 공격 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* AttackAction;
+		class UInputAction* AttackAction;
 
 	// 음영준 - Focus Action -> 시간 여유가 되면 추가 될 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* FocusAction;
+		class UInputAction* FocusAction;
 
 	// 음영준 - RightFistCollisionBox -> 플레이어 공격 시 잠시 활성화되는 박스콜리전
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent* RightFistCollisionBox;
+		class UBoxComponent* RightFistCollisionBox;
+
+	// 박광훈 - 플레이어 글라이딩
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* GlidingAction;
+
+	// 박광훈 - 플레이어 떨어지는 속도
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		float DescendingRate = 300;
+
+	//박광훈 - 글라이더 메쉬
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* GliderMesh;
+
+	// 박광훈 - 현재 클라이딩 유무
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		bool IsGliding = false;
+
+	FVector CurrentVelocity;
+
+	bool OriginalOrientRotation;
+	float OriginalGravityScale;
+	float OriginalWalkingSpeed;
+	float OriginalDecelration;
+	float OriginalAcceleration;
+	float OriginalAirControl;
+	bool OriginalDesiredRotation;
+	float MinimumHeight = 300;
+	float Delta;
 
 	class UAIPerceptionStimuliSourceComponent* StimulusSource;
 
@@ -69,6 +97,7 @@ private:
 	/// </summary>
 	UFUNCTION(BlueprintCallable, Category = "Material")
 		void ChangeMaterialToInvisible();
+
 	/// <summary>
 	/// 박광훈 - 일반 머티리얼로 바꿔주는 함수
 	/// </summary>
@@ -81,18 +110,17 @@ public:
 		return IsInvisible;
 	}
 
-
 	/// <summary>
 	/// 박광훈 - 오버랩 함수
 	/// </summary>
 	UFUNCTION()
-	void HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+		void HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	/// <summary>
 	/// 박광훈 - 딜레이
 	/// </summary>
 	FTimerHandle DelayTimerHandle;
-	
+
 	/// <summary>
 	/// 박광훈 - 틱 이벤트 추가
 	/// </summary>
@@ -102,7 +130,7 @@ public:
 	void DelayPlay();
 
 	ATeamUnreal2023_2Character();
-	
+
 
 protected:
 
@@ -117,13 +145,28 @@ protected:
 
 	// 음영준 - Focus기능이 탑재된 함수(Focus Action에 바인딩 됨)
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = Input)
-	void Focus();
+		void Focus();
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
+
+	UFUNCTION(BlueprintCallable, Category = Character)
+	 void Togglegliding();
+
+	void StartGliding();
+
+	void StopGliding();
+
+	bool CanStartGliding();
+
+	void RecordOrignalSettings();
+
+	void DescentPlayer();
+
+	void ApplyOrignalSettings();
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -139,4 +182,3 @@ public:
 
 	void UpdateInvisible(bool isVisible);
 };
-
