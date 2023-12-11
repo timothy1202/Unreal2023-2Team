@@ -116,7 +116,6 @@ void ATeamUnreal2023_2Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	SetInvisibility();
 }
 
 /// <summary>
@@ -135,6 +134,7 @@ void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedCo
 		IsInvisible = true;
 
 		UpdateInvisible(IsInvisible);
+		ChangeMaterialToInvisible();
 		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
 	}
 
@@ -147,20 +147,40 @@ void ATeamUnreal2023_2Character::DelayPlay()
 {
 	IsInvisible = false;
 	UpdateInvisible(IsInvisible);
+	RestoreOriginalMaterial();
 }
 
 /// <summary>
-/// 플레이어 투명화 적용 (시각적으로)
+/// 박광훈 - 플레이어 투명 머티리얼 입히기
 /// </summary>
-void ATeamUnreal2023_2Character::SetInvisibility()
+void ATeamUnreal2023_2Character::ChangeMaterialToInvisible()
 {
-	if (IsInvisible == true)
+	if (USkeletalMeshComponent* MeshComponent = GetMesh())
 	{
-		
+		if (UMaterialInterface* InvisibleMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("'/Game/M_Invisible.M_Invisible'")))
+		{
+			MeshComponent->SetMaterial(0, InvisibleMaterial);
+			MeshComponent->SetMaterial(1, InvisibleMaterial);
+		}
 	}
-	else
-	{
+}
 
+/// <summary>
+/// 박광훈 - 플레이어 원래 머티리얼 입히기
+/// </summary>
+void ATeamUnreal2023_2Character::RestoreOriginalMaterial()
+{
+	if (USkeletalMeshComponent* MeshComponent = GetMesh())
+	{
+		if (UMaterialInterface* OriginalMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("'/Game/Characters/Mannequins/Materials/MI_Manny_01.MI_Manny_01'")))
+		{
+			MeshComponent->SetMaterial(0, OriginalMaterial);
+
+		}
+		if (UMaterialInterface* OriginalMaterial1 = LoadObject<UMaterialInterface>(nullptr, TEXT("'/Game/Characters/Mannequins/Materials/MI_Manny_02.MI_Manny_02'")))
+		{
+			MeshComponent->SetMaterial(1, OriginalMaterial1);
+		}
 	}
 }
 

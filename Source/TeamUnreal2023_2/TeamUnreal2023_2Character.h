@@ -64,7 +64,16 @@ private:
 	/// </summary>
 	bool IsInvisible;
 
-	
+	/// <summary>
+	/// 박광훈 - 투명 머티리얼로 바꿔주는 함수
+	/// </summary>
+	UFUNCTION(BlueprintCallable, Category = "Material")
+		void ChangeMaterialToInvisible();
+	/// <summary>
+	/// 박광훈 - 일반 머티리얼로 바꿔주는 함수
+	/// </summary>
+	UFUNCTION(BlueprintCallable, Category = "Material")
+		void RestoreOriginalMaterial();
 
 public:
 	FORCEINLINE bool GetIsInvisible()
@@ -83,12 +92,6 @@ public:
 	/// 박광훈 - 딜레이
 	/// </summary>
 	FTimerHandle DelayTimerHandle;
-
-	/// <summary>
-	/// 박광훈 - 플레이어 투명으로 만드는 커스텀 이벤트
-	/// </summary>
-	UFUNCTION(BlueprintCallable, Category = "Custom")
-	void SetInvisibility();
 	
 	/// <summary>
 	/// 박광훈 - 틱 이벤트 추가
