@@ -9,7 +9,7 @@
 #include "NPCAIController.generated.h"
 
 /**
- * 
+ *
  */
 
 UCLASS()
@@ -29,11 +29,11 @@ private:
 	void SetupPerceptionSystem();
 
 	UFUNCTION()
-	void OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus);
+		void OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus);
 
 	// 음영준 - 매 틱마다 AI의 행동(Behavior)을 검사하여 자신의 행동이랑 다를 시 자신의 행동을 바꾸고 행동 UI를 알맞게 바꿔주는 함수
 	void SetUIOnBehaviorChange();
-	
+
 public:
 	explicit ANPCAIController(FObjectInitializer const& ObjectInitializer);
 
@@ -45,4 +45,10 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 	void MakeIsInvisibleFalse(bool what);
+
+
+	/// <summary>
+	/// 박광훈 - 메쉬 컴포넌트 반환
+	/// </summary>
+	USkeletalMeshComponent* GetMeshComponent() const;
 };

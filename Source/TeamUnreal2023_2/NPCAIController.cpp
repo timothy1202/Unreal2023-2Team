@@ -11,7 +11,7 @@
 
 ANPCAIController::ANPCAIController(FObjectInitializer const& ObjectInitializer)
 {
-	SetupPerceptionSystem(); 
+	SetupPerceptionSystem();
 }
 
 void ANPCAIController::BeginPlay()
@@ -65,11 +65,11 @@ void ANPCAIController::SetupPerceptionSystem()
 	if (SightConfig)
 	{
 		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(
-		TEXT("Perception Component")));
+			TEXT("Perception Component")));
 		SightConfig->SightRadius = 500.f; // 감지 구역범위
 		SightConfig->LoseSightRadius = SightConfig->SightRadius + 25.f; // npc가 플레이거 그만 보기시작하는 범위
 		SightConfig->PeripheralVisionAngleDegrees = 90.f; //npc가 정면만 볼수있게
-		SightConfig->SetMaxAge(5.f); 
+		SightConfig->SetMaxAge(5.f);
 		SightConfig->AutoSuccessRangeFromLastSeenLocation = 520.f; //계속 볼수있게 필요한 최소 거리?
 		SightConfig->DetectionByAffiliation.bDetectEnemies = true; // 적 판단
 		SightConfig->DetectionByAffiliation.bDetectFriendlies = true; // 아군 판단
@@ -109,7 +109,7 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 		}
 		// 음영준 - 플레이어 감지 성공 여부를 저장
 
-		// 박광훈 -npc가 플레이어 위치를 잃으면 canseeplayer거짓 
+		// 박광훈 -npc가 플레이어 위치를 잃으면 canseeplayer거짓
 		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Sensed);
 
 		// 음영준 - 플레이어가 보이는지 안보이는지에 따라 IsFindPlayer의 Bool값 설정
@@ -131,4 +131,19 @@ void ANPCAIController::SetUIOnBehaviorChange()
 		behavior = controlledPawn->GetBehavior();
 		controlledPawn->SetUI(behavior);
 	}
+}
+
+/// <summary>
+/// 박광훈 - 메쉬 컴포넌트 반환
+/// </summary>
+/// <returns></returns>
+USkeletalMeshComponent* ANPCAIController::GetMeshComponent() const
+{
+	APawn* ControlledPawn = GetPawn();
+	if (ControlledPawn)
+	{
+		USkeletalMeshComponent* MeshComponent = Cast<USkeletalMeshComponent>(ControlledPawn->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
+		return MeshComponent;
+	}
+	return nullptr;
 }
