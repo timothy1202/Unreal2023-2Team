@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTTask_MonsterBase::ExecuteTask(UBehaviorTreeComponent& Own
 		{
 			// 음영준 - AI의 움직임 멈춤
 			OwnerComp.GetAIOwner()->StopMovement();
-
+			UE_LOG(LogTemp, Log, TEXT("NPC Got Hit"));
 			// 음영준 - TickTask실행을 위한 bNotifyTick 설정
 			bNotifyTick = true;
 
