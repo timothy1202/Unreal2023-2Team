@@ -24,7 +24,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components")
 	class UStaticMeshComponent* StaticMeshComponent;
@@ -32,7 +31,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
 	class UPawnSensingComponent* PawnSensingComponent;
 
-	void OnSeePlayer(APawn* Pawn);
+	UFUNCTION(BlueprintCallable)
+		void CustomEvent(APawn* Pawn);
+
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))

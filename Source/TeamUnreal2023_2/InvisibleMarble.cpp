@@ -40,6 +40,7 @@ AInvisibleMarble::AInvisibleMarble()
     }
 
     SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AInvisibleMarble::OnOverlapBegin);
+
 }
 
 // Called when the game starts or when spawned
