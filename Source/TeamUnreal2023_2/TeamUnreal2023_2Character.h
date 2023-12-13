@@ -71,6 +71,22 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		bool IsGliding = false;
 
+	//¹Ú±¤ÈÆ - ÆÖ ÄÄÆ÷³ÍÆ®
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* PetSpringArm;
+
+	//¹Ú±¤ÈÆ - ÆÖ ½ºÄÌ·¹Åæ¸Þ½¬
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* PetSkeletalMesh;
+
+	// ¹Ú±¤ÈÆ - ÇÃ·¹ÀÌ¾î ÆÖ ¼ÒÈ¯ ÀÎÇ²
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SummonPetAction;
+
+	// ¹Ú±¤ÈÆ - ÇÃ·¹ÀÌ¾î ÆÖ ¼ÒÈ¯ ÀÎÇ²
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* CancelPetAction;
+
 	FVector CurrentVelocity;
 
 	bool OriginalOrientRotation;
@@ -153,20 +169,25 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
+	// ¹Ú±¤ÈÆ - ±Û¶óÀÌ´õ °ü·Ã ÇÔ¼ö
 	UFUNCTION(BlueprintCallable, Category = Character)
 	 void Togglegliding();
-
+	// ¹Ú±¤ÈÆ - ±Û¶óÀÌ´õ °ü·Ã ÇÔ¼ö
 	void StartGliding();
-
+	// ¹Ú±¤ÈÆ - ±Û¶óÀÌ´õ °ü·Ã ÇÔ¼ö
 	void StopGliding();
-
+	// ¹Ú±¤ÈÆ - ±Û¶óÀÌ´õ °ü·Ã ÇÔ¼ö
 	bool CanStartGliding();
-
+	// ¹Ú±¤ÈÆ - ±Û¶óÀÌ´õ °ü·Ã ÇÔ¼ö
 	void RecordOrignalSettings();
-
+	// ¹Ú±¤ÈÆ - ±Û¶óÀÌ´õ °ü·Ã ÇÔ¼ö
 	void DescentPlayer();
-
+	// ¹Ú±¤ÈÆ - ±Û¶óÀÌ´õ °ü·Ã ÇÔ¼ö
 	void ApplyOrignalSettings();
+	//¹Ú±¤ÈÆ - Æê ¼ÒÈ¯
+	void SummonPet();
+	//¹Ú±¤ÈÆ - Æê ¼ÒÈ¯ Ãë¼Ò
+	void CancelPet();
 
 public:
 	/** Returns CameraBoom subobject **/

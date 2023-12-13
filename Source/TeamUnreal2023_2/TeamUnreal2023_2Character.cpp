@@ -87,6 +87,15 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 	GliderMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GlidingMesh"));
 	GliderMesh->SetupAttachment(RootComponent);
 
+	// Spring Arm ÄÄÆ÷³ÍÆ®¸¦ »ý¼ºÇÏ°í RootComponent¿¡ ¿¬°áÇÕ´Ï´Ù.
+	PetSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("PetSpringArm"));
+	PetSpringArm->SetupAttachment(RootComponent);
+
+	// Skeletal Mesh ÄÄÆ÷³ÍÆ®¸¦ »ý¼ºÇÏ°í SpringArm¿¡ ¿¬°áÇÕ´Ï´Ù.
+	PetSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PetSkeletalMesh"));
+	PetSkeletalMesh->SetupAttachment(PetSpringArm);
+
+
 	SetupStimulusSource();
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -111,6 +120,7 @@ void ATeamUnreal2023_2Character::BeginPlay()
 	IsInvisible = false;
 
 	GliderMesh->SetVisibility(false);
+	PetSkeletalMesh->SetVisibility(false);
 
 }
 
@@ -345,6 +355,18 @@ void ATeamUnreal2023_2Character::ApplyOrignalSettings()
 
 }
 
+void ATeamUnreal2023_2Character::SummonPet()
+{
+	PetSkeletalMesh->SetVisibility(true);
+	GetCharacterMovement()->MaxWalkSpeed = 1000;
+}
+
+void ATeamUnreal2023_2Character::CancelPet()
+{
+	PetSkeletalMesh->SetVisibility(false);
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -357,7 +379,15 @@ void ATeamUnreal2023_2Character::SetupPlayerInputComponent(class UInputComponent
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
+		//¹Ú±¤ÈÆ - ±Û¶óÀÌµù ÀÎÇ²
 		EnhancedInputComponent->BindAction(GlidingAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::Togglegliding);
+
+		//¹Ú±¤ÈÆ - ÆÖ ¼ÒÈ¯ ÀÎÇ²
+		EnhancedInputComponent->BindAction(SummonPetAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::SummonPet);
+
+		//¹Ú±¤ÈÆ - ÆÖ Ãë¼Ò ÀÎÇ²
+		EnhancedInputComponent->BindAction(CancelPetAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::CancelPet);
+
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATeamUnreal2023_2Character::Move);
 
