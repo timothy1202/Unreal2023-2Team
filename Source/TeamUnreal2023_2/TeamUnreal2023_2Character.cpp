@@ -121,7 +121,7 @@ void ATeamUnreal2023_2Character::BeginPlay()
 
 	GliderMesh->SetVisibility(false);
 	PetSkeletalMesh->SetVisibility(false);
-
+	okayToSummonPet = false;
 }
 
 
@@ -355,16 +355,36 @@ void ATeamUnreal2023_2Character::ApplyOrignalSettings()
 
 }
 
+/// <summary>
+/// ¹Ú±¤ÈÆ - ÆÖ ¼ÒÈ¯
+/// </summary>
 void ATeamUnreal2023_2Character::SummonPet()
 {
-	PetSkeletalMesh->SetVisibility(true);
-	GetCharacterMovement()->MaxWalkSpeed = 1000;
+	if (okayToSummonPet == false)
+	{
+		PetSkeletalMesh->SetVisibility(true);
+		GetCharacterMovement()->MaxWalkSpeed = 1000;
+		okayToSummonPet = true;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATeamUnreal2023_2Character::CancelPet, 3.0f, false);
+	}
 }
 
+/// <summary>
+/// ¹Ú±¤ÈÆ - ÆÖ »ç¿ë½Ã°£ ³¡³²
+/// </summary>
 void ATeamUnreal2023_2Character::CancelPet()
 {
 	PetSkeletalMesh->SetVisibility(false);
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetWorld()->GetTimerManager().SetTimer(CoolTimeHandle, this, &ATeamUnreal2023_2Character::PetCoolTime, 3.0f, false);
+}
+
+/// <summary>
+/// ¹Ú±¤ÈÆ - ÆÖ ÄðÅ¸ÀÓ
+/// </summary>
+void ATeamUnreal2023_2Character::PetCoolTime()
+{
+	okayToSummonPet = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -384,9 +404,6 @@ void ATeamUnreal2023_2Character::SetupPlayerInputComponent(class UInputComponent
 
 		//¹Ú±¤ÈÆ - ÆÖ ¼ÒÈ¯ ÀÎÇ²
 		EnhancedInputComponent->BindAction(SummonPetAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::SummonPet);
-
-		//¹Ú±¤ÈÆ - ÆÖ Ãë¼Ò ÀÎÇ²
-		EnhancedInputComponent->BindAction(CancelPetAction, ETriggerEvent::Started, this, &ATeamUnreal2023_2Character::CancelPet);
 
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATeamUnreal2023_2Character::Move);

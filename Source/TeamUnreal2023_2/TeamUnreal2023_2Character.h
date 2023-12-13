@@ -138,6 +138,16 @@ public:
 	FTimerHandle DelayTimerHandle;
 
 	/// <summary>
+	/// ¹Ú±¤ÈÆ - ÆÖ µô·¹ÀÌ
+	/// </summary>
+	FTimerHandle TimerHandle;
+
+	/// <summary>
+	/// ¹Ú±¤ÈÆ - ÆÖ ¼ÒÈ¯ ÄðÅ¸ÀÓ
+	/// </summary>
+	FTimerHandle CoolTimeHandle;
+
+	/// <summary>
 	/// ¹Ú±¤ÈÆ - Æ½ ÀÌº¥Æ® Ãß°¡
 	/// </summary>
 	virtual void Tick(float DeltaTime) override;
@@ -188,7 +198,10 @@ protected:
 	void SummonPet();
 	//¹Ú±¤ÈÆ - Æê ¼ÒÈ¯ Ãë¼Ò
 	void CancelPet();
-
+	//¹Ú±¤ÈÆ - Æê ¼ÒÈ¯ °¡´ÉÇÑÁö
+	bool okayToSummonPet;
+	//¹Ú±¤ÈÆ - Æê ¼ÒÈ¯ ÄðÅ¸ÀÓ
+	void PetCoolTime();
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
