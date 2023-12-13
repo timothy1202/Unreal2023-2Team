@@ -7,11 +7,13 @@
 #include "TeamUnreal2023_2Character.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/BoxComponent.h"
+#include "Components/ArrowComponent.h"
+#include "TurretBullet.h"
 
 // Sets default values
 ATurretPawn::ATurretPawn()
 {
-
+	//¹Ú±¤ÈÆ - ·çÆ® Àü¿ë ÄÝ¸®Àü¹Ú½º ÇÒ´ç
 	RootCollisionBox = CreateDefaultSubobject< UBoxComponent>(TEXT("RootCollisionBox"));
 	RootCollisionBox->SetupAttachment(RootComponent);
 
@@ -25,14 +27,37 @@ ATurretPawn::ATurretPawn()
 	//¹Ú±¤ÈÆ - Æù °¨Áö ÄÄÆ÷³ÍÆ® ÇÒ´ç
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
 
+	//¹Ú±¤ÈÆ - ¹æÇâ ÄÄÆ÷³ÍÆ® ÇÒ´ç
+	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("MyArrowComponent"));
+	ArrowComponent->SetupAttachment(StaticMeshComponent);
+
 }
 
 // Called when the game starts or when spawned
 void ATurretPawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorldTimerManager().SetTimer(DelayTimerHandle, this, &ATurretPawn::DelayedFunction, 0.2f, false);
 }
 
+void ATurretPawn::DelayedFunction()
+{
+	if (ArrowComponent)
+	{
+		FVector Location = ArrowComponent->GetComponentLocation();
+		FRotator Rotation = ArrowComponent->GetComponentRotation();
+		FActorSpawnParameters SpawnParams;
+
+		ATurretBullet* NewActor = GetWorld()->SpawnActor<ATurretBullet>(ATurretBullet::StaticClass(), Location, Rotation, SpawnParams);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ArrowComponent is null!"));
+	}
+}
+
+//¹Ú±¤ÈÆ - ÅÍ·¿ÀÇ È¸Àü°ª °è»ê
 void ATurretPawn::CustomEvent(APawn* Pawn)
 {
 	ATeamUnreal2023_2Character* ThirdPerson = Cast<ATeamUnreal2023_2Character>(Pawn);
@@ -44,6 +69,7 @@ void ATurretPawn::CustomEvent(APawn* Pawn)
 		FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(MyLocation, TargetLocation);
 		SetActorRotation(NewRotation);
 	}
+	DelayedFunction();
 }
 
 // Called every frame

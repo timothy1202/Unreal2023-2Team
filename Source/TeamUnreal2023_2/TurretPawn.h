@@ -34,8 +34,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void CustomEvent(APawn* Pawn);
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UArrowComponent* ArrowComponent;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* RootCollisionBox;
+
+	void DelayedFunction();
+
+	FTimerHandle DelayTimerHandle;
 };
