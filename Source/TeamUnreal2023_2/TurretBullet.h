@@ -33,4 +33,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UStaticMeshComponent* StaticMeshComponent;
 
+	void TurnOffGravity();
+
+	void ScaleDownSphereComponent();
 };

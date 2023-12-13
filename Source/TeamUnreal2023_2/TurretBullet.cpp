@@ -36,11 +36,34 @@ ATurretBullet::ATurretBullet()
 	}
 }
 
+//¹Ú±¤ÈÆ - ½ºÇÇ¾îÄÄÆ÷³ÍÆ® Å©±â Á¶Á¤
+void ATurretBullet::ScaleDownSphereComponent()
+{
+	if (SphereComponent)
+	{
+		FVector NewScale = FVector(0.05f, 0.05f, 0.05f);
+		SphereComponent->SetWorldScale3D(NewScale);
+	}
+}
+
+//¹Ú±¤ÈÆ - Áß·Â ²ô´Â ÇÔ¼ö
+void ATurretBullet::TurnOffGravity()
+{
+	if (SphereComponent)
+	{
+		SphereComponent->SetEnableGravity(false);
+	}
+	if (StaticMeshComponent)
+	{
+		StaticMeshComponent->SetEnableGravity(false);
+	}
+}
+
 // Called when the game starts or when spawned
 void ATurretBullet::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//ScaleDownSphereComponent();
 }
 
 // Called every frame

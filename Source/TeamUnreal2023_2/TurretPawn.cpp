@@ -43,17 +43,16 @@ void ATurretPawn::BeginPlay()
 
 void ATurretPawn::DelayedFunction()
 {
-	if (ArrowComponent)
-	{
+
 		FVector Location = ArrowComponent->GetComponentLocation();
 		FRotator Rotation = ArrowComponent->GetComponentRotation();
 		FActorSpawnParameters SpawnParams;
 
 		ATurretBullet* NewActor = GetWorld()->SpawnActor<ATurretBullet>(ATurretBullet::StaticClass(), Location, Rotation, SpawnParams);
-	}
-	else
+	if (NewActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ArrowComponent is null!"));
+		NewActor->ScaleDownSphereComponent();
+		NewActor->TurnOffGravity();
 	}
 }
 
