@@ -32,4 +32,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
 	class UPawnSensingComponent* PawnSensingComponent;
 
+	void OnSeePlayer(APawn* Pawn);
 };

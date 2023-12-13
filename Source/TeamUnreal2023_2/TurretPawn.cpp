@@ -4,6 +4,8 @@
 #include "TurretPawn.h"
 #include "Components/StaticMeshComponent.h"
 #include "Perception/PawnSensingComponent.h"
+#include "TeamUnreal2023_2Character.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ATurretPawn::ATurretPawn()
@@ -19,6 +21,9 @@ ATurretPawn::ATurretPawn()
 
 	//박광훈 - 폰 감지 컴포넌트 할당
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
+
+	//박광훈 - 폰 감지
+	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ATurretPawn::OnSeePlayer);
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +31,20 @@ void ATurretPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ATurretPawn::OnSeePlayer(APawn* Pawn)
+{
+	ATeamUnreal2023_2Character* ThirdPerson = Cast<ATeamUnreal2023_2Character>(Pawn);
+
+	if (ThirdPerson)
+	{
+		// 감지된 폰이 BP_ThirdPerson인 경우에만 액터가 BP_ThirdPerson을 향하도록 회전 값을 계산하고 설정합니다.
+		FVector MyLocation = GetActorLocation();
+		FVector TargetLocation = ThirdPerson->GetActorLocation();
+		FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(MyLocation, TargetLocation);
+		SetActorRotation(NewRotation);
+	}
 }
 
 // Called every frame
