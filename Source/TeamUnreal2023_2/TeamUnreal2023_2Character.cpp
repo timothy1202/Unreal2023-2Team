@@ -87,11 +87,11 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 	GliderMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GlidingMesh"));
 	GliderMesh->SetupAttachment(RootComponent);
 
-	// Spring Arm 컴포넌트를 생성하고 RootComponent에 연결합니다.
+	//박광훈 - 팻 스프링암 할당
 	PetSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("PetSpringArm"));
 	PetSpringArm->SetupAttachment(RootComponent);
 
-	// Skeletal Mesh 컴포넌트를 생성하고 SpringArm에 연결합니다.
+	//박광훈 - 팻 스켈레톤 메쉬 할당
 	PetSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PetSkeletalMesh"));
 	PetSkeletalMesh->SetupAttachment(PetSpringArm);
 
