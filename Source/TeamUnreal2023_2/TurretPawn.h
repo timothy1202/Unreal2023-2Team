@@ -33,4 +33,8 @@ public:
 	class UPawnSensingComponent* PawnSensingComponent;
 
 	void OnSeePlayer(APawn* Pawn);
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* RootCollisionBox;
 };

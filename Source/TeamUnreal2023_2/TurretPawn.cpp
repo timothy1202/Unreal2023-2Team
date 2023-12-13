@@ -6,6 +6,7 @@
 #include "Perception/PawnSensingComponent.h"
 #include "TeamUnreal2023_2Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ATurretPawn::ATurretPawn()
@@ -13,9 +14,13 @@ ATurretPawn::ATurretPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	RootCollisionBox = CreateDefaultSubobject< UBoxComponent>(TEXT("RootCollisionBox"));
+	RootCollisionBox->SetupAttachment(RootComponent);
+
 	//¹Ú±¤ÈÆ - ½ºÅÂÆ½ ¸Þ½¬ ÇÒ´ç
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	RootComponent = StaticMeshComponent;
+	StaticMeshComponent->SetupAttachment(RootCollisionBox);
+
 	//¹Ú±¤ÈÆ - ½ºÅÂÆ½ ¸Þ½¬ È¸Àü
 	StaticMeshComponent->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 
