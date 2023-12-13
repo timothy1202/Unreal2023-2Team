@@ -60,6 +60,8 @@ ANPC::ANPC()
 		BehaviorWidget->SetWidgetClass(BPUserWidget.Class);
 	}
 
+	// 아이콘 세팅 부분
+
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> a_attackMontage(L"UAnimMontage'/Game/Animations/Montage/AttackMontage.AttackMontage'");
 	if (a_attackMontage.Object != NULL)
 		AttackMontage = a_attackMontage.Object;
@@ -88,6 +90,10 @@ ANPC::ANPC()
 	if (t_gothitIcon.Object != NULL)
 		gothitIcon = t_gothitIcon.Object;
 
+	static ConstructorHelpers::FObjectFinder<UTexture2D> t_skillIcon(L"Texture2D'/Game/Icons/invisible.invisible'");
+	if (t_skillIcon.Object != NULL)
+		skillIcon = t_skillIcon.Object;
+
 	AttackRange->SetGenerateOverlapEvents(true);
 	
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ANPC::OnBeginOverlapAttack);
@@ -95,15 +101,13 @@ ANPC::ANPC()
 	myController = ANPCAIController::StaticClass();
 	AIControllerClass = myController;
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-
-	isFindPlayer = false;
 }
 
 // Called when the game starts or when spawned
 void ANPC::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	isFindPlayer = false;
 	BehaviorWidget->InitWidget();
 
 	if (UBehaviorUI* const ref = Cast<UBehaviorUI>(BehaviorWidget->GetUserWidgetObject()))
@@ -160,7 +164,7 @@ void ANPC::OnEndOverlapPlayer(UPrimitiveComponent* OverlappedComp, AActor* Other
 	}
 }
 
-void ANPC::SetUI_Implementation(const EMonsterBehavior& behavior)
+void ANPC::SetUI(const EMonsterBehavior& behavior)
 {
 	switch (behavior)
 	{
@@ -178,6 +182,9 @@ void ANPC::SetUI_Implementation(const EMonsterBehavior& behavior)
 		break;
 	case EMonsterBehavior::GOTHIT:
 		behaviorUIRef->SetIconAndText(gothitIcon, FText::FromString("Hit"));
+		break;
+	case EMonsterBehavior::SKILL:
+		behaviorUIRef->SetIconAndText(skillIcon, FText::FromString("Skill"));
 		break;
 	}
 }

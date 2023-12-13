@@ -33,7 +33,8 @@ void ANPCAIController::BeginPlay()
 void ANPCAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	if (ANPC* const npc = Cast<ANPC>(InPawn)) //이 폰이 npc 이면
+	
+	if (ANPC* const npc = Cast<ANPC>(GetPawn())) //이 폰이 npc 이면
 	{
 		if (UBehaviorTree* const tree = npc->GetBehaviorTree()) //폰의 트리를 가져옴
 		{
@@ -41,6 +42,36 @@ void ANPCAIController::OnPossess(APawn* InPawn)
 			UseBlackboard(tree->BlackboardAsset, b); //블랙보드 에셋을 트리한테 가져와서 존재하면 b에 넣어준다
 			Blackboard = b;
 			RunBehaviorTree(tree);
+		}
+	}
+}
+
+void ANPCAIController::SetNPCBehavior(EMonsterBehavior newBehavior)
+{
+	if (ANPC* npc = Cast<ANPC>(GetPawn()))
+	{
+		npc->SetBehavior(newBehavior);
+	}
+}
+
+void ANPCAIController::RunMainBT()
+{
+	if (ANPC* const npc = Cast<ANPC>(GetPawn()))
+	{
+		if (UBehaviorTree* const tree = npc->GetBehaviorTree())
+		{
+			RunBehaviorTree(tree);
+		}
+	}
+}
+
+void ANPCAIController::RunSkillBT()
+{
+	if (ANPC* const npc = Cast<ANPC>(GetPawn()))
+	{
+		if (UBehaviorTree* const subTree = npc->GetSubBehaviorTree())
+		{
+			RunBehaviorTree(subTree);
 		}
 	}
 }
@@ -102,6 +133,7 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 		if (ch->GetIsInvisible() == true)
 		{
 			Sensed = false;
+			SetNPCBehavior(EMonsterBehavior::NOTHING);
 		}
 		else
 		{
@@ -120,8 +152,6 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 
 	}
 }
-
-
 
 void ANPCAIController::SetUIOnBehaviorChange()
 {

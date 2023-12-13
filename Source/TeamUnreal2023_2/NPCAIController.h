@@ -26,6 +26,8 @@ private:
 
 	class UAISenseConfig_Sight* SightConfig;
 
+	class UBehaviorTree* TempBT;
+
 	void SetupPerceptionSystem();
 
 	UFUNCTION()
@@ -42,7 +44,16 @@ protected:
 
 	virtual void OnPossess(APawn* InPawn) override;
 
+	// 음영준 - AIController에서 행동을 직접 결정(플레이어를 잃을 시 행동을 바꾸기 위함)
+	void SetNPCBehavior(EMonsterBehavior newBehavior);
+
 public:
+	// 음영준 - 스킬 사용 후 MainBT로 돌아오기 위한 함수
+	void RunMainBT();
+
+	// 음영준 - 스킬을 사용하기 위한 서브트리 실행
+	void RunSkillBT();
+
 	virtual void Tick(float DeltaTime) override;
 	void MakeIsInvisibleFalse(bool what);
 

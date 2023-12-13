@@ -20,10 +20,10 @@ public:
 	explicit UBTTask_InvisibleMonster(FObjectInitializer const& ObjectInitializer); // ¹Ú±¤ÈÆ - °´Ã¼ ÃÊ±âÈ­
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override; //¹Ú±¤ÈÆ - ¸ó½ºÅÍ ¼ÒÈ¯ Å×½ºÅ©
 
-private:
 	/// <summary>
 	/// ¹Ú±¤ÈÆ - Åõ¸íÈ­ ¸ÓÆ¼¸®¾ó
 	/// </summary>
-	void ApplyInvisibleMaterial(UBehaviorTreeComponent& OwnerComp);
+	UFUNCTION()
+	void ApplyInvisibleMaterial(AAIController* controller);
 
 };

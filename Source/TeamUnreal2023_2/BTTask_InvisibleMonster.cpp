@@ -15,14 +15,21 @@
 
 UBTTask_InvisibleMonster::UBTTask_InvisibleMonster(FObjectInitializer const& ObjectInitializer) : Super(ObjectInitializer)
 {
-	NodeName = TEXT("Go Invisible");
+	NodeName = TEXT("Set Visibility");
 }
 
 EBTNodeResult::Type UBTTask_InvisibleMonster::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	ApplyInvisibleMaterial(OwnerComp);
+	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool("IsInvisible") == true)
+		return EBTNodeResult::Failed;
+
+	// 음영준 - 다음 스킬을 사용할 때 Visible로 
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool("IsInvisible", true);
+
+	AAIController* AIController = OwnerComp.GetAIOwner();
+	ApplyInvisibleMaterial(AIController);
 
 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
@@ -31,9 +38,9 @@ EBTNodeResult::Type UBTTask_InvisibleMonster::ExecuteTask(UBehaviorTreeComponent
 /// <summary>
 /// 박광훈 - NPC 투명 머티리얼 입히기
 /// </summary>
-void UBTTask_InvisibleMonster::ApplyInvisibleMaterial(UBehaviorTreeComponent& OwnerComp)
+void UBTTask_InvisibleMonster::ApplyInvisibleMaterial(AAIController* controller)
 {
-	ANPCAIController* AIController = Cast<ANPCAIController>(OwnerComp.GetAIOwner());
+	ANPCAIController* AIController = Cast<ANPCAIController>(controller);
 	if (AIController)
 	{
 		USkeletalMeshComponent* MeshComponent = AIController->GetMeshComponent();

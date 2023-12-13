@@ -20,6 +20,12 @@ EBTNodeResult::Type UBTTask_NoneInvisibleMonster::ExecuteTask(UBehaviorTreeCompo
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
+	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool("IsInvisible") == false)
+		return EBTNodeResult::Failed;
+
+	// 음영준 - 다음 스킬을 사용할 때 Invisible로 
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool("IsInvisible", false);
+
 	RestoreOriginalMaterial(OwnerComp);
 
 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);

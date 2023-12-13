@@ -45,7 +45,6 @@ private:
 	UAnimMontage* GotHitMontage;
 
 	// 음영준 - 행동 아이콘 이미지 텍스쳐 레퍼런스들
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* nothingIcon;
 
@@ -61,12 +60,15 @@ private:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* gothitIcon;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
+	UTexture2D* skillIcon;
+
 	// 음영준 - 디폴트 AI컨트롤러 할당 관련 변수
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class ANPCAIController> myController;
 
 	// 음영준 - Anim Instance의 Fighting Idle을 활성화 시킬지에 대한 값으로서 활용
-	bool isFindPlayer;
+	bool isFindPlayer = false;
 
 protected:
 	// Called when the game starts or when spawned
@@ -74,6 +76,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UBehaviorTree* Tree; //이 트리가 에디터에 설정된다
+
+	// 음영준 - 스킬사용을 위한 서브트리
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	UBehaviorTree* SubTree;
 
 public:
 	// Sets default values for this character's properties
@@ -97,10 +103,9 @@ public:
 	void OnEndOverlapPlayer(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	/// <summary>
-	/// 음영준 - 블루프린트 상속을 통해 재정의할 수 있는 함수 -> 새로운 적이 추가됨에 따라 새 행동이 할당 될때 이 함수에서 재정의해야 됨
+	/// 음영준 - 행동에 따라 UI를 세팅하는 부분
 	/// </summary>
 	/// <param name="할당할 새 행동 Enum"></param>
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "UI")
 	void SetUI(const EMonsterBehavior& behavior);
 
 	// 음영준 - 행동UI가 플레이어 카메라를 바라보게 하기 위한 함수
@@ -129,4 +134,5 @@ public:
 
 	FORCEINLINE EMonsterBehavior GetBehavior() const { return myBehavior; }
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return Tree; }
+	FORCEINLINE UBehaviorTree* GetSubBehaviorTree() const { return SubTree; }
 };

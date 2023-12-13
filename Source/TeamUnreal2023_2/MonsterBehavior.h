@@ -13,5 +13,6 @@ enum class EMonsterBehavior : uint8
 	PATROL UMETA(DisplayName = "Patrol"),
 	CHASE UMETA(DisplayName = "Chase"),
 	ATTACK UMETA(DisplayName = "Attack"),
-	GOTHIT UMETA(DisplayName = "Gothit")
+	GOTHIT UMETA(DisplayName = "Gothit"),
+	SKILL UMETA(DisplayName = "Skill")
 };
