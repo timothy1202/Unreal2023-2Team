@@ -28,6 +28,7 @@ ATurretPawn::ATurretPawn()
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
 	//¹Ú±¤ÈÆ - Æù °¨Áö
 	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ATurretPawn::OnSeePlayer);
+
 }
 
 // Called when the game starts or when spawned
@@ -38,8 +39,8 @@ void ATurretPawn::BeginPlay()
 
 void ATurretPawn::OnSeePlayer(APawn* Pawn)
 {
+
 	ATeamUnreal2023_2Character* ThirdPerson = Cast<ATeamUnreal2023_2Character>(Pawn);
-	UE_LOG(LogTemp, Warning, TEXT("P1111cted"));
 	if (ThirdPerson)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player detected"));
@@ -48,6 +49,10 @@ void ATurretPawn::OnSeePlayer(APawn* Pawn)
 		FVector TargetLocation = ThirdPerson->GetActorLocation();
 		FRotator NewRotation = UKismetMathLibrary::FindLookAtRotation(MyLocation, TargetLocation);
 		SetActorRotation(NewRotation);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cast to ATeamUnreal2023_2Character failed"));
 	}
 }
 
