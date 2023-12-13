@@ -15,7 +15,7 @@ ATurretPawn::ATurretPawn()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = StaticMeshComponent;
 	//¹Ú±¤ÈÆ - ½ºÅÂÆ½ ¸Þ½¬ È¸Àü
-	StaticMeshComponent->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
+	StaticMeshComponent->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 
 	//¹Ú±¤ÈÆ - Æù °¨Áö ÄÄÆ÷³ÍÆ® ÇÒ´ç
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
