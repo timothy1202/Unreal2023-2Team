@@ -63,7 +63,8 @@ void ATurretBullet::TurnOffGravity()
 void ATurretBullet::BeginPlay()
 {
 	Super::BeginPlay();
-	//ScaleDownSphereComponent();
+	ScaleDownSphereComponent();
+	TurnOffGravity();
 }
 
 // Called every frame

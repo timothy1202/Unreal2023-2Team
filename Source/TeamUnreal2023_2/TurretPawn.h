@@ -41,6 +41,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* RootCollisionBox;
 
+	UFUNCTION(BlueprintCallable)
 	void DelayedFunction();
 
 	FTimerHandle DelayTimerHandle;

@@ -49,11 +49,11 @@ void ATurretPawn::DelayedFunction()
 		FActorSpawnParameters SpawnParams;
 
 		ATurretBullet* NewActor = GetWorld()->SpawnActor<ATurretBullet>(ATurretBullet::StaticClass(), Location, Rotation, SpawnParams);
-	if (NewActor)
+	/*if (NewActor)
 	{
 		NewActor->ScaleDownSphereComponent();
 		NewActor->TurnOffGravity();
-	}
+	}*/
 }
 
 //박광훈 - 터렛의 회전값 계산

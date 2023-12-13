@@ -21,6 +21,6 @@ public:
 	// Blueprint 캐릭터 클래스에 대한 참조를 생성합니다.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		TSubclassOf<class APawn> BP_PawnClass;
-	
+
 	
 };
