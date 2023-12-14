@@ -6,11 +6,8 @@
 
 ANPC* BTFunction::GetControlledNPC(UBehaviorTreeComponent& OwnerComp)
 {
-	if (bool result = OwnerComp.GetAIOwner()->GetPawn()->IsA(ANPC::StaticClass()))
-	{
-		ANPC* controlledPawn = Cast<ANPC>(OwnerComp.GetAIOwner()->GetPawn());
+	if (ANPC* controlledPawn = Cast<ANPC>(OwnerComp.GetAIOwner()->GetPawn()))
 		return controlledPawn;
-	}
 
 	return nullptr;
 }
@@ -22,13 +19,13 @@ void BTFunction::SetMonsterBehavior(ANPC& npc, EMonsterBehavior newBehavior)
 
 bool BTFunction::GetNPCAndSetBehavior(UBehaviorTreeComponent& OwnerComp, EMonsterBehavior newBehavior)
 {
-	ANPC* controlledPawn = nullptr;
+	if (ANPC* controlledPawn = GetControlledNPC(OwnerComp))
+	{
+		if(controlledPawn->GetIsSkillOn() == false || newBehavior == EMonsterBehavior::SKILL)
+			SetMonsterBehavior(*controlledPawn, newBehavior);
 
-	if (ANPC* pawn = GetControlledNPC(OwnerComp))
-		controlledPawn = pawn;
+		return true;
+	}
 	else
 		return false;
-
-	SetMonsterBehavior(*controlledPawn, newBehavior);
-	return true;
 }

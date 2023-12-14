@@ -1,16 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+// À½¿µÁØ - ¾È¾¸ Áö¿ö¾ß µÊ
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BTTask_MonsterBase.h"
+#include "BTTask_SkillBase.h"
 #include "BTTask_NoneInvisibleMonster.generated.h"
 
 /**
  *
  */
 UCLASS()
-class TEAMUNREAL2023_2_API UBTTask_NoneInvisibleMonster : public UBTTask_MonsterBase
+class TEAMUNREAL2023_2_API UBTTask_NoneInvisibleMonster : public UBTTask_SkillBase
 {
 	GENERATED_BODY()
 

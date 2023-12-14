@@ -116,6 +116,9 @@ void ANPCAIController::MakeIsInvisibleFalse(bool what)
 {
 	GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", !what);
 	controlledPawn->SetIsFindPlayer(!what);
+
+	// 음영준 - 스킬 사용 취소
+	CancleNPCSkill();
 }
 
 /// <summary>
@@ -128,28 +131,28 @@ void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulu
 	//플레이어가 보이는 지
 	if (ATeamUnreal2023_2Character* const ch = Cast<ATeamUnreal2023_2Character>(Actor))
 	{
-		bool Sensed;
-		// 박광훈 - 플레이어가 투명인지에 따른 감지 유무
-		if (ch->GetIsInvisible() == true)
-		{
-			Sensed = false;
-			SetNPCBehavior(EMonsterBehavior::NOTHING);
-		}
-		else
-		{
-			Sensed = Stimulus.WasSuccessfullySensed();
-		}
 		// 음영준 - 플레이어 감지 성공 여부를 저장
+		bool Sensed = Stimulus.WasSuccessfullySensed();
 
-		// 박광훈 -npc가 플레이어 위치를 잃으면 canseeplayer거짓
-		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Sensed);
+		// 박광훈 - 플레이어가 투명인지에 따른 감지 유무
+		if (ch->GetIsInvisible() == true)	Sensed = false;
 
 		// 음영준 - 플레이어가 보이는지 안보이는지에 따라 IsFindPlayer의 Bool값 설정
 		if (Sensed)
+		{
 			controlledPawn->SetIsFindPlayer(true);
+		}
 		else
-			controlledPawn->SetIsFindPlayer(false);
+		{
+			// 음영준 - 스킬 사용 취소
+			CancleNPCSkill();
 
+			SetNPCBehavior(EMonsterBehavior::NOTHING);
+			controlledPawn->SetIsFindPlayer(false);
+		}
+
+		// 박광훈 -npc가 플레이어 위치를 잃으면 canseeplayer거짓
+		GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", Sensed);
 	}
 }
 
@@ -160,6 +163,19 @@ void ANPCAIController::SetUIOnBehaviorChange()
 	{
 		behavior = controlledPawn->GetBehavior();
 		controlledPawn->SetUI(behavior);
+	}
+}
+
+void ANPCAIController::CancleNPCSkill()
+{
+	if (ANPC* npc = Cast<ANPC>(GetPawn()))
+	{
+		// 음영준 - AI의 스킬로직을 취소
+		npc->CancleSkillLogic();
+
+		// 음영준 - 만약 쿨타임형 스킬을 가진 AI라면 플레이어를 잃었을 때 스킬로직이 바인딩 되어있는 Skill의 스킬로직을 없앰
+		if (npc->Skill.IsBound())
+			npc->Skill.Unbind();
 	}
 }
 

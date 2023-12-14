@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BTTask_MonsterBase.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTask_RunSkillBT.generated.h"
 
 /**
  * 음영준 - 스킬을 사용하는 서브트리로 전환해주는 클래스
  */
 UCLASS()
-class TEAMUNREAL2023_2_API UBTTask_RunSkillBT : public UBTTask_MonsterBase
+class TEAMUNREAL2023_2_API UBTTask_RunSkillBT : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	

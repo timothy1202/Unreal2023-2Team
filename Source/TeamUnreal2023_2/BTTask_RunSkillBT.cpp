@@ -14,9 +14,6 @@ EBTNodeResult::Type UBTTask_RunSkillBT::ExecuteTask(UBehaviorTreeComponent& Owne
 {
 	if (ANPCAIController* AIController = Cast<ANPCAIController>(OwnerComp.GetAIOwner()))
 	{
-		// 음영준 - AI의 상태를 Skill상태로 바꿈
-		BTFunction::GetNPCAndSetBehavior(OwnerComp, GetNewBehavior());
-
 		AIController->RunSkillBT();
 		return EBTNodeResult::Succeeded;
 	}

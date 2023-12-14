@@ -10,9 +10,13 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "MonsterBehavior.h"
 #include "BehaviorUI.h"
+#include "BTTask_SkillBase.h"
 
 #include "GameFramework/Character.h"
 #include "NPC.generated.h"
+
+// 음영준 - 스킬 사용을 설정할 델리게이트
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FDelegateSkill, ANPC*, npc, bool, isSkill);
 
 UCLASS()
 class TEAMUNREAL2023_2_API ANPC : public ACharacter
@@ -67,6 +71,18 @@ private:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class ANPCAIController> myController;
 
+	// 음영준 - 스킬 로직 클래스
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Skill", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UBTTask_SkillBase> skillLogic;
+
+	// 음영준 - 스킬 사용 쿨타임
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float skillCoolTime;
+	float skillTime;
+
+	// 음영준 - 스킬 사용중인지에 관한 bool변수
+	bool isSkillOnGoing = false;
+
 	// 음영준 - Anim Instance의 Fighting Idle을 활성화 시킬지에 대한 값으로서 활용
 	bool isFindPlayer = false;
 
@@ -89,6 +105,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// 음영준 - AI가 사용할 스킬 델리게이트 변수
+	FDelegateSkill Skill;
 
 	// 음영준 - AI가 공격을 받을때 실행
 	UFUNCTION()
@@ -120,11 +139,17 @@ public:
 	// 음영준 - Montage가 실행중인지 반환하는 함수
 	bool IsPlayingMontage();
 	
+	// 음영준 - 스킬 사용 함수
+	void OperateSkillLogic(float deltaTime);
+
+	// 음영준 - 스킬 사용 취소 함수
+	void CancleSkillLogic();
 
 	// Setter함수들
 
 	FORCEINLINE void SetBehavior(EMonsterBehavior newBehavior) { myBehavior = newBehavior; }
 	FORCEINLINE void SetIsFindPlayer(bool isFind) { isFindPlayer = isFind; }
+	FORCEINLINE void ResetSkillTime() { isSkillOnGoing = false; skillTime = 0.f; }
 
 	// Getter함수들
 
@@ -135,4 +160,5 @@ public:
 	FORCEINLINE EMonsterBehavior GetBehavior() const { return myBehavior; }
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return Tree; }
 	FORCEINLINE UBehaviorTree* GetSubBehaviorTree() const { return SubTree; }
+	FORCEINLINE bool GetIsSkillOn() const { return isSkillOnGoing; }
 };

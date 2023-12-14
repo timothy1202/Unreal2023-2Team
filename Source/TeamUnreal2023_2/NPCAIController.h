@@ -31,10 +31,16 @@ private:
 	void SetupPerceptionSystem();
 
 	UFUNCTION()
-		void OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus);
+	void OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus);
+
+	// 음영준 - AIController에서 행동을 직접 결정(플레이어를 잃을 시 행동을 바꾸기 위함)
+	void SetNPCBehavior(EMonsterBehavior newBehavior);
 
 	// 음영준 - 매 틱마다 AI의 행동(Behavior)을 검사하여 자신의 행동이랑 다를 시 자신의 행동을 바꾸고 행동 UI를 알맞게 바꿔주는 함수
 	void SetUIOnBehaviorChange();
+
+	// 음영준 - AI스킬 취소가 이루어지는 함수
+	void CancleNPCSkill();
 
 public:
 	explicit ANPCAIController(FObjectInitializer const& ObjectInitializer);
@@ -43,9 +49,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void OnPossess(APawn* InPawn) override;
-
-	// 음영준 - AIController에서 행동을 직접 결정(플레이어를 잃을 시 행동을 바꾸기 위함)
-	void SetNPCBehavior(EMonsterBehavior newBehavior);
 
 public:
 	// 음영준 - 스킬 사용 후 MainBT로 돌아오기 위한 함수

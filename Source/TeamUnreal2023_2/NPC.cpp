@@ -11,7 +11,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
-ANPC::ANPC()
+ANPC::ANPC() : skillCoolTime(5.0f), skillTime(0.f)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -125,6 +125,7 @@ void ANPC::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	this->UILookCamera();
+	this->OperateSkillLogic(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -142,6 +143,9 @@ void ANPC::OnBeginOverlapAttack(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		{
 			SetBehavior(EMonsterBehavior::GOTHIT);
 			PlayMontageOnBehavior(EMonsterBehavior::GOTHIT);
+
+			//음영준 - 만약 스킬 로직을 가지고 있는 AI라면 스킬 취소 및 스킬 쿨타임도 초기화
+			CancleSkillLogic();
 		}
 	}
 }
@@ -218,4 +222,42 @@ bool ANPC::IsPlayingMontage()
 		return true;
 	else
 		return false;
+}
+
+void ANPC::OperateSkillLogic(float deltaTime)
+{
+	if (skillLogic != nullptr)
+	{
+		if (Skill.IsBound())
+		{
+			skillTime += deltaTime;
+			if (skillTime >= skillCoolTime)
+			{
+				isSkillOnGoing = isSkillOnGoing ? false : true;
+				Skill.Execute(this, isSkillOnGoing);
+				skillTime = 0.f;
+			}
+		}
+		else
+		{
+			skillTime = 0.f;
+		}
+	}
+}
+
+void ANPC::CancleSkillLogic()
+{
+	if (skillLogic)
+	{
+		// 음영준 - AI가 가지는 스킬로직을 인스턴스로 가져옴
+		UBTTask_SkillBase* SkillInstance = skillLogic.GetDefaultObject();
+		if (SkillInstance)
+		{
+			// 음영준 - AI컨트롤러의 BehaviorTree를 가져옴
+			if(UBehaviorTreeComponent* myBT = Cast<UBehaviorTreeComponent>(UAIBlueprintHelperLibrary::GetAIController(this)->GetBrainComponent()))
+				SkillInstance->CancleSkillOnFailPerception(*myBT);
+		}
+
+		ResetSkillTime();
+	}
 }

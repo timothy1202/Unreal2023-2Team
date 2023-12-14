@@ -130,7 +130,7 @@ public:
 	/// ¹Ú±¤ÈÆ - ¿À¹ö·¦ ÇÔ¼ö
 	/// </summary>
 	UFUNCTION()
-		void HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	/// <summary>
 	/// ¹Ú±¤ÈÆ - µô·¹ÀÌ
