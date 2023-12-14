@@ -215,4 +215,11 @@ public:
 	void AttackCollisionDisable();
 
 	void UpdateInvisible(bool isVisible);
+
+private:
+	bool playerHacked;
+
+public:
+	bool IsPlayerHacked() const { return playerHacked; }
+	void SetPlayerHacked(bool value) { playerHacked = value; }
 };

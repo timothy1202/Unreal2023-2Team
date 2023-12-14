@@ -99,6 +99,8 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 	SetupStimulusSource();
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	playerHacked = false;
 }
 
 void ATeamUnreal2023_2Character::BeginPlay()
@@ -122,6 +124,7 @@ void ATeamUnreal2023_2Character::BeginPlay()
 	GliderMesh->SetVisibility(false);
 	PetSkeletalMesh->SetVisibility(false);
 	okayToSummonPet = false;
+
 }
 
 
@@ -211,9 +214,16 @@ void ATeamUnreal2023_2Character::RestoreOriginalMaterial()
 
 void ATeamUnreal2023_2Character::AttackCollisionEnable()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
-	RightFistCollisionBox->SetCollisionProfileName("Fist");
-	RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
+	if (playerHacked == false)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
+		RightFistCollisionBox->SetCollisionProfileName("Fist");
+		RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
+	}
+	else
+	{
+
+	}
 }
 
 void ATeamUnreal2023_2Character::AttackCollisionDisable()

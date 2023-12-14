@@ -5,6 +5,7 @@
 #include "BTFunction.h"
 #include "AIController.h"
 #include "NPC.h"
+#include "BTTask_HackingMonster.h"
 
 
 // 음영준 - 자식 노드로부터 ExecuteTask를 실행함으로서 몽타주가 재생중인지에 대한 여부를 판단
@@ -15,9 +16,10 @@ EBTNodeResult::Type UBTTask_MonsterBase::ExecuteTask(UBehaviorTreeComponent& Own
 		// 음영준 - 만약 재생중이라면 움직임을 멈추고 EBTNodeResult를 InProgress로 반환
 		if (controlledPawn->IsPlayingMontage())
 		{
-			// 음영준 - AI의 움직임 멈춤
-			OwnerComp.GetAIOwner()->StopMovement();
-			UE_LOG(LogTemp, Log, TEXT("NPC Got Hit"));
+
+				// 음영준 - AI의 움직임 멈춤
+				OwnerComp.GetAIOwner()->StopMovement();
+				UE_LOG(LogTemp, Log, TEXT("NPC Got Hit"));
 			// 음영준 - TickTask실행을 위한 bNotifyTick 설정
 			bNotifyTick = true;
 
