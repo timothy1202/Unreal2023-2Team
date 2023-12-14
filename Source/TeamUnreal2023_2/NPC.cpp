@@ -9,6 +9,8 @@
 #include "TeamUnreal2023_2Character.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "TeamUnreal2023_2Character.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ANPC::ANPC()
@@ -136,12 +138,17 @@ void ANPC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ANPC::OnBeginOverlapAttack(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	ATeamUnreal2023_2Character* PlayerInstance = Cast<ATeamUnreal2023_2Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (OtherComp->GetCollisionProfileName() == FName("Fist"))
-	{
-		if (GotHitMontage)
+	{		
+		// playerHacked 값이 false일 때만 로직을 실행합니다.
+		if (PlayerInstance && !PlayerInstance->IsPlayerHacked())
 		{
-			SetBehavior(EMonsterBehavior::GOTHIT);
-			PlayMontageOnBehavior(EMonsterBehavior::GOTHIT);
+			if (GotHitMontage)
+			{
+				SetBehavior(EMonsterBehavior::GOTHIT);
+				PlayMontageOnBehavior(EMonsterBehavior::GOTHIT);
+			}
 		}
 	}
 }
