@@ -32,7 +32,7 @@ public:
 	class UPawnSensingComponent* PawnSensingComponent;
 
 	UFUNCTION(BlueprintCallable)
-		void CustomEvent(APawn* Pawn);
+	void LaunchBullet();
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UArrowComponent* ArrowComponent;
@@ -41,8 +41,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* RootCollisionBox;
 
-	UFUNCTION(BlueprintCallable)
-	void DelayedFunction();
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Bullet", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class ATurretBullet> BulletClass;
 
-	FTimerHandle DelayTimerHandle;
+	UFUNCTION(BlueprintCallable)
+	void OnSeePawn(APawn* Pawn);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet", meta = (AllowPrivateAccess = "true"))
+	float launchCoolTime;
+
+	float time;
 };

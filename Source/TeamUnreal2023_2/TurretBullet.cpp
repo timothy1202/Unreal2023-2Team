@@ -12,6 +12,7 @@ ATurretBullet::ATurretBullet()
 {
 	//박광훈 - 스피어 컴포넌트 추가
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("MySphereComponent"));
+	SphereComponent->SetCollisionProfileName("Bullet");
 	RootComponent = SphereComponent;
 
 	//박광훈 - 프로젝타일무브먼트 컴포넌트 추가
@@ -43,6 +44,17 @@ void ATurretBullet::ScaleDownSphereComponent()
 	{
 		FVector NewScale = FVector(0.05f, 0.05f, 0.05f);
 		SphereComponent->SetWorldScale3D(NewScale);
+	}
+
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ATurretBullet::OnBeginOverlap);
+}
+
+//음영준 - 총알이 플레이어한테 닿았을 때 총알 없앰
+void ATurretBullet::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if ((OtherActor != this) && (OtherComp->ComponentHasTag("Player")))
+	{
+		Destroy();
 	}
 }
 
