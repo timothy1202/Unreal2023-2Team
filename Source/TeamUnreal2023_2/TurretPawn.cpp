@@ -86,3 +86,8 @@ void ATurretPawn::LaunchBullet()
 
 	ATurretBullet* NewActor = GetWorld()->SpawnActor<ATurretBullet>(BulletClass, Location, Rotation, SpawnParams);
 }
+
+void ATurretPawn::DestroyOnPerceptFail()
+{
+	Destroy();
+}

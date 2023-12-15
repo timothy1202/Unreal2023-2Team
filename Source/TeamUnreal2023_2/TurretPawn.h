@@ -37,6 +37,8 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UArrowComponent* ArrowComponent;
 
+	void DestroyOnPerceptFail();
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* RootCollisionBox;

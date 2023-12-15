@@ -228,9 +228,9 @@ void ATeamUnreal2023_2Character::RestoreOriginalMaterial()
 
 void ATeamUnreal2023_2Character::AttackCollisionEnable()
 {
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
-		RightFistCollisionBox->SetCollisionProfileName("Fist");
-		RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
+	RightFistCollisionBox->SetCollisionProfileName("Fist");
+	RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
 }
 
 void ATeamUnreal2023_2Character::AttackCollisionDisable()
