@@ -98,7 +98,7 @@ void ANPCAIController::SetupPerceptionSystem()
 		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(
 			TEXT("Perception Component")));
 		SightConfig->SightRadius = 500.f; // 감지 구역범위
-		SightConfig->LoseSightRadius = SightConfig->SightRadius + 25.f; // npc가 플레이거 그만 보기시작하는 범위
+		SightConfig->LoseSightRadius = SightConfig->SightRadius + 25.f; // npc가 플레이어가 그만 보기시작하는 범위
 		SightConfig->PeripheralVisionAngleDegrees = 90.f; //npc가 정면만 볼수있게
 		SightConfig->SetMaxAge(5.f);
 		SightConfig->AutoSuccessRangeFromLastSeenLocation = 520.f; //계속 볼수있게 필요한 최소 거리?
