@@ -27,11 +27,14 @@ EBTNodeResult::Type UBTTask_SummonMonster::ExecuteTask(UBehaviorTreeComponent& O
     {
         if (ANPCAIController* AIController = Cast<ANPCAIController>(OwnerComp.GetAIOwner()))
         {
-            FVector RelativeLocation = FVector(100.0f, 0.0f, 0.0f);
+            FVector RelativeLocation = FVector(-50.0f, 0.0f, 0.0f);
             FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
             FVector AILocation = AIController->GetPawn()->GetActorLocation();
             FVector SpawnLocation = AILocation + RelativeLocation;
             FActorSpawnParameters SpawnParams;
+            //SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+            SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 
             if (UWorld* World = AIController->GetWorld())
             {
@@ -44,6 +47,7 @@ EBTNodeResult::Type UBTTask_SummonMonster::ExecuteTask(UBehaviorTreeComponent& O
                 }
 
                 ATurretPawn* SpawnedPawn = World->SpawnActor<ATurretPawn>(TurretPawnBP, SpawnLocation, SpawnRotation, SpawnParams);
+    
                 if (!SpawnedPawn)
                 {
                     UE_LOG(LogTemp, Warning, TEXT("Failed to spawn ATurretPawn"));
