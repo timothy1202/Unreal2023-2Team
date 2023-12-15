@@ -23,32 +23,34 @@ UBTTask_SummonMonster::UBTTask_SummonMonster(FObjectInitializer const& ObjectIni
 
 EBTNodeResult::Type UBTTask_SummonMonster::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    if (ANPCAIController* AIController = Cast<ANPCAIController>(OwnerComp.GetAIOwner()))
+    if (okToSummon == false)
     {
-        FVector RelativeLocation = FVector(100.0f, 0.0f, 0.0f); // AI 폰으로부터 x축 방향으로 100 유닛 떨어진 위치
-        FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
-
-        // AI 컨트롤러의 폰 위치를 가져옵니다.
-        FVector AILocation = AIController->GetPawn()->GetActorLocation();
-
-        // 소환할 위치를 계산합니다.
-        FVector SpawnLocation = AILocation + RelativeLocation;
-
-        // 소환 파라미터를 생성합니다.
-        FActorSpawnParameters SpawnParams;
-
-        // 폰을 소환합니다.
-        if (UWorld* World = AIController->GetWorld()) // AI 컨트롤러를 통해 월드를 얻습니다.
+        if (ANPCAIController* AIController = Cast<ANPCAIController>(OwnerComp.GetAIOwner()))
         {
-            UClass* TurretPawnBP = LoadObject<UClass>(NULL, TEXT("/Game/TurretPawn.TurretPawn_C"));
+            FVector RelativeLocation = FVector(100.0f, 0.0f, 0.0f);
+            FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
+            FVector AILocation = AIController->GetPawn()->GetActorLocation();
+            FVector SpawnLocation = AILocation + RelativeLocation;
+            FActorSpawnParameters SpawnParams;
 
-            if (TurretPawnBP)
+            if (UWorld* World = AIController->GetWorld())
             {
-                ATurretPawn* SpawnedPawn = World->SpawnActor<ATurretPawn>(TurretPawnBP, SpawnLocation, SpawnRotation, SpawnParams);
-                if (SpawnedPawn)
+                UClass* TurretPawnBP = LoadObject<UClass>(NULL, TEXT("/Game/TurretPawn.TurretPawn_C"));
+
+                if (!TurretPawnBP)
                 {
-                    return EBTNodeResult::Succeeded;
+                    UE_LOG(LogTemp, Warning, TEXT("Failed to load class: /Game/TurretPawn.TurretPawn_C"));
+                    return EBTNodeResult::Failed;
                 }
+
+                ATurretPawn* SpawnedPawn = World->SpawnActor<ATurretPawn>(TurretPawnBP, SpawnLocation, SpawnRotation, SpawnParams);
+                if (!SpawnedPawn)
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Failed to spawn ATurretPawn"));
+                    return EBTNodeResult::Failed;
+                }
+                okToSummon = true;
+                return EBTNodeResult::Succeeded;
             }
         }
     }

@@ -23,5 +23,8 @@ public:
 
 	UFUNCTION()
 	void AbletoSummon();
+
+private:
+	bool okToSummon = false;
 	
 };

@@ -14,13 +14,13 @@
 // Sets default values
 ATurretPawn::ATurretPawn() : launchCoolTime(0.5f), time(launchCoolTime)
 {
-	//¹Ú±¤ÈÆ - ·çÆ® Àü¿ë ÄÝ¸®Àü¹Ú½º ÇÒ´ç
-	RootCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("RootCollisionBox"));
-	RootCollisionBox->SetupAttachment(RootComponent);
+
+	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = Root;
 
 	//¹Ú±¤ÈÆ - ½ºÅÂÆ½ ¸Þ½¬ ÇÒ´ç
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	StaticMeshComponent->SetupAttachment(RootCollisionBox);
+	StaticMeshComponent->SetupAttachment(RootComponent);
 
 	//¹Ú±¤ÈÆ - ½ºÅÂÆ½ ¸Þ½¬ È¸Àü
 	StaticMeshComponent->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
