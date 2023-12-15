@@ -356,7 +356,15 @@ void ANPC::RandomTypeSkill(float deltaTime)
 // 음영준 - 차징 스킬을 가지는 몬스터의 스킬로직 정의
 void ANPC::ChargingTypeSkill(float deltaTime)
 {
-
+	if (Skill.IsBound())
+	{
+		if (triggerSkill)
+		{
+			triggerSkill = false;
+			Skill.Execute(this, true);
+			Skill.Execute(this, false);
+		}
+	}
 }
 
 // 음영준 - 온힛 스킬을 가지는 몬스터의 스킬로직 정의

@@ -2,13 +2,10 @@
 
 #include "BTTask_SummonMonster.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Engine/World.h" //SpawnActor 함수를 사용하기 위한 헤더
 #include "GameFramework/Character.h"
 #include "NavigationSystem.h"
 #include "MonsterBehavior.h"
 #include "Kismet/GameplayStatics.h"
-#include "NPC.h"
-#include "TurretPawn.h"
 #include "NPCAIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 
@@ -18,60 +15,53 @@
 ///param name="ObjectInitializer"></param>
 UBTTask_SummonMonster::UBTTask_SummonMonster(FObjectInitializer const& ObjectInitializer)
 {
-	NodeName =TEXT("Spawn Child Monster");
+	NodeName =TEXT("Spawn Monster");
 }
 
 EBTNodeResult::Type UBTTask_SummonMonster::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    if (okToSummon == false)
-    {
-        if (ANPCAIController* AIController = Cast<ANPCAIController>(OwnerComp.GetAIOwner()))
-        {
-            FVector RelativeLocation = FVector(-50.0f, 0.0f, 0.0f);
-            FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
-            FVector AILocation = AIController->GetPawn()->GetActorLocation();
-            FVector SpawnLocation = AILocation + RelativeLocation;
-            FActorSpawnParameters SpawnParams;
-            //SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-            SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	// 음영준 - 스킬 사용은 부모 클래스에서
+	if (Super::ExecuteTask(OwnerComp, NodeMemory) == EBTNodeResult::InProgress)
+		return EBTNodeResult::InProgress;
 
-
-            if (UWorld* World = AIController->GetWorld())
-            {
-                UClass* TurretPawnBP = LoadObject<UClass>(NULL, TEXT("/Game/TurretPawn.TurretPawn_C"));
-
-                if (!TurretPawnBP)
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("Failed to load class: /Game/TurretPawn.TurretPawn_C"));
-                    return EBTNodeResult::Failed;
-                }
-
-                ATurretPawn* SpawnedPawn = World->SpawnActor<ATurretPawn>(TurretPawnBP, SpawnLocation, SpawnRotation, SpawnParams);
-    
-                if (!SpawnedPawn)
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("Failed to spawn ATurretPawn"));
-                    return EBTNodeResult::Failed;
-                }
-                okToSummon = true;
-                return EBTNodeResult::Succeeded;
-            }
-        }
-    }
-
-    return EBTNodeResult::Failed;
+	return EBTNodeResult::Succeeded;
 }
 
-
-
-
-
-void UBTTask_SummonMonster::SetSummoning(ANPC* npc, bool isHack)
+void UBTTask_SummonMonster::UseSkill(UBehaviorTreeComponent& OwnerComp)
 {
-
+	ANPC* npc = Cast<ANPC>(OwnerComp.GetAIOwner()->GetPawn());
+	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool("InSkillRange"))
+	{
+		// 음영준 - 델리게이트 할당
+		if (npc->Skill.IsBound() == false)
+		{
+			OwnerComp.GetAIOwner()->StopMovement();
+			OwnerComp.GetAIOwner()->SetFocus(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			npc->PlayMontageOnBehavior(EMonsterBehavior::SKILL);
+			npc->Skill.BindUFunction(this, FName("Summon"));
+		}
+	}
 }
 
-void UBTTask_SummonMonster::AbletoSummon()
+void UBTTask_SummonMonster::CancleSkill(UBehaviorTreeComponent& OwnerComp)
 {
-    
+	if (ANPC* npc = Cast<ANPC>(OwnerComp.GetAIOwner()->GetPawn()))
+	{
+		OwnerComp.GetAIOwner()->ClearFocus(EAIFocusPriority::Gameplay);
+		npc->StopAnimMontage();
+	}
+}
+
+void UBTTask_SummonMonster::Summon(ANPC* npc, bool isRight)
+{
+	FRotator SpawnRotation = npc->GetActorRotation();
+	FVector AILocation = npc->GetActorLocation();
+	FVector RelativeLocation = FVector(0.0f, 200.0f, 0.0f);
+	RelativeLocation = isRight ? RelativeLocation : -RelativeLocation;
+	FVector SpawnLocation = AILocation + RelativeLocation;
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	ATurretPawn* SpawnedPawn = GetWorld()->SpawnActor<ATurretPawn>(turret_BP, SpawnLocation, SpawnRotation, SpawnParams);
 }
