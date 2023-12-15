@@ -9,6 +9,8 @@
 #include "TeamUnreal2023_2Character.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "TeamUnreal2023_2Character.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ANPC::ANPC() : skillCoolTime(5.0f), skillTime(0.f)
@@ -148,15 +150,50 @@ void ANPC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ANPC::OnBeginOverlapAttack(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	ATeamUnreal2023_2Character* PlayerInstance = Cast<ATeamUnreal2023_2Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (OtherComp->GetCollisionProfileName() == FName("Fist"))
-	{
-		if (GotHitMontage)
+	{		
+		// playerHacked 값이 false일 때만 로직을 실행합니다.
+		if (PlayerInstance && !PlayerInstance->IsPlayerHacked())
 		{
 			SetBehavior(EMonsterBehavior::GOTHIT);
 			PlayMontageOnBehavior(EMonsterBehavior::GOTHIT);
 
 			//음영준 - 만약 스킬 로직을 가지고 있는 AI라면 스킬 취소 및 스킬 쿨타임도 초기화
 			CancleSkillLogic();
+			if (GotHitMontage)
+			{
+				SetBehavior(EMonsterBehavior::GOTHIT);
+				PlayMontageOnBehavior(EMonsterBehavior::GOTHIT);
+
+				// IsPlayerHacked()를 참으로 세팅합니다.
+				PlayerInstance->SetPlayerHacked(true);
+
+				ATeamUnreal2023_2Character* MyCharacterInstance = Cast<ATeamUnreal2023_2Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+				// 인스턴스가 유효한지 확인합니다.
+				if (MyCharacterInstance)
+				{
+					// 해당 인스턴스의 함수를 호출합니다.
+					MyCharacterInstance->ChangeHackedPlayerToInvisible();
+				}
+
+				// FTimerHandle 인스턴스를 생성합니다.
+				FTimerHandle TimerHandle;
+
+				// 3초 뒤에 SetPlayerHacked() 함수를 호출하여 값을 거짓으로 바꿉니다.
+				GetWorld()->GetTimerManager().SetTimer(TimerHandle, [PlayerInstance, MyCharacterInstance]()
+					{
+						if (PlayerInstance)
+						{
+							PlayerInstance->SetPlayerHacked(false);
+						}
+						if (MyCharacterInstance)
+						{
+							MyCharacterInstance->RestoreOriginalMaterial();
+						}
+					}, 3.0f, false);
+			}
 		}
 	}
 }

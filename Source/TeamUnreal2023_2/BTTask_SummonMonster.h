@@ -18,9 +18,10 @@ public:
 	explicit UBTTask_SummonMonster(FObjectInitializer const& ObjectInitializer); //객체 초기화
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override; //몬스터 소환 테스크
 
-	// Blueprint 캐릭터 클래스에 대한 참조를 생성합니다.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-		TSubclassOf<class APawn> BP_PawnClass;
+	UFUNCTION()
+	void SetSummoning(class ANPC* npc, bool isHack);
 
+	UFUNCTION()
+	void AbletoSummon();
 	
 };

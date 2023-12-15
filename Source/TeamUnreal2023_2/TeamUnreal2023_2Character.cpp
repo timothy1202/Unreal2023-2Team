@@ -99,6 +99,8 @@ ATeamUnreal2023_2Character::ATeamUnreal2023_2Character()
 	SetupStimulusSource();
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	playerHacked = false;
 }
 
 void ATeamUnreal2023_2Character::BeginPlay()
@@ -122,6 +124,7 @@ void ATeamUnreal2023_2Character::BeginPlay()
 	GliderMesh->SetVisibility(false);
 	PetSkeletalMesh->SetVisibility(false);
 	okayToSummonPet = false;
+
 }
 
 
@@ -154,13 +157,20 @@ void ATeamUnreal2023_2Character::Tick(float DeltaTime)
 /// <param name="SweepResult"></param>
 void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherComp->ComponentHasTag("InvisibleMarble"))
+	if (playerHacked == false)
 	{
-		IsInvisible = true;
+		if (OtherComp->ComponentHasTag("InvisibleMarble"))
+		{
+			IsInvisible = true;
 
-		UpdateInvisible(IsInvisible);
-		ChangeMaterialToInvisible();
-		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
+			UpdateInvisible(IsInvisible);
+			ChangeMaterialToInvisible();
+			GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
+		}
+	}
+	else
+	{
+
 	}
 
 }
@@ -190,6 +200,18 @@ void ATeamUnreal2023_2Character::ChangeMaterialToInvisible()
 	}
 }
 
+void ATeamUnreal2023_2Character::ChangeHackedPlayerToInvisible()
+{
+	if (USkeletalMeshComponent* MeshComponent = GetMesh())
+	{
+		if (UMaterialInterface* InvisibleMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("'/Game/M_Hacked.M_Hacked'")))
+		{
+			MeshComponent->SetMaterial(0, InvisibleMaterial);
+			MeshComponent->SetMaterial(1, InvisibleMaterial);
+		}
+	}
+}
+
 /// <summary>
 /// 박광훈 - 플레이어 원래 머티리얼 입히기
 /// </summary>
@@ -211,9 +233,9 @@ void ATeamUnreal2023_2Character::RestoreOriginalMaterial()
 
 void ATeamUnreal2023_2Character::AttackCollisionEnable()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
-	RightFistCollisionBox->SetCollisionProfileName("Fist");
-	RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Attack Start!"));
+		RightFistCollisionBox->SetCollisionProfileName("Fist");
+		RightFistCollisionBox->SetNotifyRigidBodyCollision(true);
 }
 
 void ATeamUnreal2023_2Character::AttackCollisionDisable()
@@ -244,13 +266,16 @@ void ATeamUnreal2023_2Character::UpdateInvisible(bool isVisible)
 /// </summary>
 void ATeamUnreal2023_2Character::Togglegliding()
 {
-	if (IsGliding == false)
+	if (playerHacked == false)
 	{
-		StartGliding();
-	}
-	else
-	{
-		StopGliding();
+		if (IsGliding == false)
+		{
+			StartGliding();
+		}
+		else
+		{
+			StopGliding();
+		}
 	}
 }
 
@@ -360,12 +385,15 @@ void ATeamUnreal2023_2Character::ApplyOrignalSettings()
 /// </summary>
 void ATeamUnreal2023_2Character::SummonPet()
 {
-	if (okayToSummonPet == false)
+	if (playerHacked == false)
 	{
-		PetSkeletalMesh->SetVisibility(true);
-		GetCharacterMovement()->MaxWalkSpeed = 1000;
-		okayToSummonPet = true;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATeamUnreal2023_2Character::CancelPet, 3.0f, false);
+		if (okayToSummonPet == false)
+		{
+			PetSkeletalMesh->SetVisibility(true);
+			GetCharacterMovement()->MaxWalkSpeed = 1000;
+			okayToSummonPet = true;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATeamUnreal2023_2Character::CancelPet, 3.0f, false);
+		}
 	}
 }
 
@@ -460,7 +488,10 @@ void ATeamUnreal2023_2Character::Look(const FInputActionValue& Value)
 
 void ATeamUnreal2023_2Character::Attack()
 {
-	if (AttackMontage)
-		if (!(GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage)))
-			PlayAnimMontage(AttackMontage);
+	if (playerHacked == false)
+	{
+		if (AttackMontage)
+			if (!(GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage)))
+				PlayAnimMontage(AttackMontage);
+	}
 }
