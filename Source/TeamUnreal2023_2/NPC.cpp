@@ -148,6 +148,34 @@ void ANPC::OnBeginOverlapAttack(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			{
 				SetBehavior(EMonsterBehavior::GOTHIT);
 				PlayMontageOnBehavior(EMonsterBehavior::GOTHIT);
+
+				// IsPlayerHacked()를 참으로 세팅합니다.
+				PlayerInstance->SetPlayerHacked(true);
+
+				ATeamUnreal2023_2Character* MyCharacterInstance = Cast<ATeamUnreal2023_2Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+				// 인스턴스가 유효한지 확인합니다.
+				if (MyCharacterInstance)
+				{
+					// 해당 인스턴스의 함수를 호출합니다.
+					MyCharacterInstance->ChangeHackedPlayerToInvisible();
+				}
+
+				// FTimerHandle 인스턴스를 생성합니다.
+				FTimerHandle TimerHandle;
+
+				// 3초 뒤에 SetPlayerHacked() 함수를 호출하여 값을 거짓으로 바꿉니다.
+				GetWorld()->GetTimerManager().SetTimer(TimerHandle, [PlayerInstance, MyCharacterInstance]()
+					{
+						if (PlayerInstance)
+						{
+							PlayerInstance->SetPlayerHacked(false);
+						}
+						if (MyCharacterInstance)
+						{
+							MyCharacterInstance->RestoreOriginalMaterial();
+						}
+					}, 3.0f, false);
 			}
 		}
 	}

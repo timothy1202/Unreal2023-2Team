@@ -17,4 +17,14 @@ class TEAMUNREAL2023_2_API UBTTask_HackingMonster : public UBTTask_MonsterBase
 public:
 	explicit UBTTask_HackingMonster(FObjectInitializer const& ObjectInitializer); // ¹Ú±¤ÈÆ - °´Ã¼ ÃÊ±âÈ­
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override; //¹Ú±¤ÈÆ - ¸ó½ºÅÍ ¼ÒÈ¯ Å×½ºÅ©
+	
+	UFUNCTION()
+	void SetHacking(class ANPC* npc, bool isHack);
+
+	UFUNCTION()
+	void AbletoHack();
+
+	UFUNCTION()
+	void StopHacking();
+
 };

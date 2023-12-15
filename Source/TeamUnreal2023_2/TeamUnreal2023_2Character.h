@@ -108,23 +108,29 @@ private:
 	/// </summary>
 	bool IsInvisible;
 
+public:
+	FORCEINLINE bool GetIsInvisible()
+	{
+		return IsInvisible;
+	}
+
 	/// <summary>
-	/// 박광훈 - 투명 머티리얼로 바꿔주는 함수
-	/// </summary>
+/// 박광훈 - 투명 머티리얼로 바꿔주는 함수
+/// </summary>
 	UFUNCTION(BlueprintCallable, Category = "Material")
 		void ChangeMaterialToInvisible();
+
+	/// <summary>
+	/// 박광훈 - 플레이어 해킹 당할시 적용 함수
+	/// </summary>
+	UFUNCTION(BlueprintCallable, Category = "Material")
+	void ChangeHackedPlayerToInvisible();
 
 	/// <summary>
 	/// 박광훈 - 일반 머티리얼로 바꿔주는 함수
 	/// </summary>
 	UFUNCTION(BlueprintCallable, Category = "Material")
 		void RestoreOriginalMaterial();
-
-public:
-	FORCEINLINE bool GetIsInvisible()
-	{
-		return IsInvisible;
-	}
 
 	/// <summary>
 	/// 박광훈 - 오버랩 함수
