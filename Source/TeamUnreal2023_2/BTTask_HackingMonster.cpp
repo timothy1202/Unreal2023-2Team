@@ -13,7 +13,6 @@ UBTTask_HackingMonster::UBTTask_HackingMonster(FObjectInitializer const& ObjectI
 EBTNodeResult::Type UBTTask_HackingMonster::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 
-
 	return EBTNodeResult::Succeeded;
 }
 
