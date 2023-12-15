@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "MonsterBehavior.h"
+#include "SkillType.h"
 #include "BehaviorUI.h"
 #include "BTTask_SkillBase.h"
 
@@ -27,6 +28,12 @@ private:
 	// 음영준 - 적의 공격범위를 위한 Sphere콜리젼
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* AttackRange;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* SkillRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	ESkillType skillType;
 
 	// 음영준 - 적의 행동을 구분하기 위한 enum변수
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -48,6 +55,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* GotHitMontage;
 
+	// 음영준 - Skill Montage -> 이 변수는 에디터에서 바꿔줌(각 AI마다 사용하는 스킬이 다르기 때문)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* SkillMontage;
+
 	// 음영준 - 행동 아이콘 이미지 텍스쳐 레퍼런스들
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* nothingIcon;
@@ -64,7 +75,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* gothitIcon;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Icons", meta = (AllowPrivateAccess = "true"))
 	UTexture2D* skillIcon;
 
 	// 음영준 - 디폴트 AI컨트롤러 할당 관련 변수
@@ -82,6 +93,9 @@ private:
 
 	// 음영준 - 스킬 사용중인지에 관한 bool변수
 	bool isSkillOnGoing = false;
+
+	// 음영준 - 트리거용 스킬에 사용
+	bool triggerSkill = false;
 
 	// 음영준 - Anim Instance의 Fighting Idle을 활성화 시킬지에 대한 값으로서 활용
 	bool isFindPlayer = false;
@@ -121,6 +135,14 @@ public:
 	UFUNCTION()
 	void OnEndOverlapPlayer(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	// 음영준 - AI스킬 발동범위 내에 플레이어 오버랩시 실행
+	UFUNCTION()
+	void OnBeginOverlapSkillRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	// 음영준 - AI스킬 발동범위 내에 플레이어 오버랩이 끝날 시 실행
+	UFUNCTION()
+	void OnEndOverlapSkillRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 	/// <summary>
 	/// 음영준 - 행동에 따라 UI를 세팅하는 부분
 	/// </summary>
@@ -145,10 +167,21 @@ public:
 	// 음영준 - 스킬 사용 취소 함수
 	void CancleSkillLogic();
 
+	/* 음영준 - 각 스킬 타입마다 정의된 함수 */
+
+	// 음영준 - 쿨타임 스킬
+	void CoolTimeTypeSkill(float deltaTime);
+	// 음영준 - 피격시 일어나는 스킬
+	void HitTypeSkill(float deltaTime);
+	// 음영준 - 차징 스킬
+	void ChargingTypeSkill();
+
 	// Setter함수들
 
 	FORCEINLINE void SetBehavior(EMonsterBehavior newBehavior) { myBehavior = newBehavior; }
 	FORCEINLINE void SetIsFindPlayer(bool isFind) { isFindPlayer = isFind; }
+	FORCEINLINE void SetIsSkillOn(bool isSkill) { isSkillOnGoing = isSkill; }
+	FORCEINLINE void SetTriggerSkill() { triggerSkill = true; }
 	FORCEINLINE void ResetSkillTime() { isSkillOnGoing = false; skillTime = 0.f; }
 
 	// Getter함수들

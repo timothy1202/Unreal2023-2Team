@@ -16,42 +16,51 @@ ANPC::ANPC() : skillCoolTime(5.0f), skillTime(0.f)
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// AI공격범위 Attach
+	// 음영준 - AI공격범위 Attach
 	AttackRange = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRange"));
 	AttackRange->SetupAttachment(GetMesh());
 	
-	// AI공격범위 위치 및 범위, 프로필설정
+	// 음영준 - AI공격범위 위치 및 범위, 프로필설정
 	AttackRange->SetRelativeLocation(FVector(0.0f, 0.0f, 90.0f));
 	AttackRange->InitSphereRadius(50.0f);
 	AttackRange->SetCollisionProfileName(TEXT("AttackRange"));
 
-	// 컨트롤러 회전 사용X
+	// 음영준 - AI스킬 발동범위 Attach
+	SkillRange = CreateDefaultSubobject<USphereComponent>(TEXT("SkillRange"));
+	SkillRange->SetupAttachment(GetMesh());
+
+	// 음영준 - AI스킬 발동범위 위치 및 범위, 프로필설정
+	SkillRange->SetRelativeLocation(FVector(0.0f, 0.0f, 90.0f));
+	SkillRange->InitSphereRadius(200.0f);
+	SkillRange->SetCollisionProfileName(TEXT("SkillRange"));
+
+	// 음영준 - 컨트롤러 회전 사용X
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
-	// 무브먼트 방향으로 회전
+	// 음영준 - 무브먼트 방향으로 회전
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 
-	// 메시 적절히 배치
+	// 음영준 - 메시 적절히 배치
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, 270.0f, 0.0f));
 	
-	// 카메라 부딪힘 방지
+	// 음영준 - 카메라 부딪힘 방지
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreCameraPawn"));
 	GetMesh()->SetCollisionProfileName(TEXT("IgnoreCameraMesh"));
 
-	// WidgetComponent할당
+	// 음영준 - WidgetComponent할당
 	BehaviorWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("BehaviorWidget"));
 
-	// 플레이어가 UI Window에 부딪히는 현상 방지
+	// 음영준 - 플레이어가 UI Window에 부딪히는 현상 방지
 	BehaviorWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	// 루트에 결합
+	// 음영준 - 루트에 결합
 	BehaviorWidget->SetupAttachment(RootComponent);
 
-	// UI위치 적절히 배치
+	// 음영준 - UI위치 적절히 배치
 	BehaviorWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 160.0f));
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> BPUserWidget(L"Blueprint'/Game/ThirdPerson/Blueprints/BP_BehaviorUI.BP_BehaviorUI_C'");
@@ -60,7 +69,7 @@ ANPC::ANPC() : skillCoolTime(5.0f), skillTime(0.f)
 		BehaviorWidget->SetWidgetClass(BPUserWidget.Class);
 	}
 
-	// 아이콘 세팅 부분
+	// 음영준 - 아이콘 세팅 부분
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> a_attackMontage(L"UAnimMontage'/Game/Animations/Montage/AttackMontage.AttackMontage'");
 	if (a_attackMontage.Object != NULL)
@@ -117,6 +126,8 @@ void ANPC::BeginPlay()
 
 	AttackRange->OnComponentBeginOverlap.AddDynamic(this, &ANPC::OnBeginOverlapPlayer);
 	AttackRange->OnComponentEndOverlap.AddDynamic(this, &ANPC::OnEndOverlapPlayer);
+	SkillRange->OnComponentBeginOverlap.AddDynamic(this, &ANPC::OnBeginOverlapSkillRange);
+	SkillRange->OnComponentEndOverlap.AddDynamic(this, &ANPC::OnEndOverlapSkillRange);
 }
 
 // Called every frame
@@ -168,6 +179,22 @@ void ANPC::OnEndOverlapPlayer(UPrimitiveComponent* OverlappedComp, AActor* Other
 	}
 }
 
+void ANPC::OnBeginOverlapSkillRange(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherComp->ComponentHasTag("Player"))
+	{
+		UAIBlueprintHelperLibrary::GetAIController(this)->GetBlackboardComponent()->SetValueAsBool("InSkillRange", true);
+	}
+}
+
+void ANPC::OnEndOverlapSkillRange(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherComp->ComponentHasTag("Player"))
+	{
+		UAIBlueprintHelperLibrary::GetAIController(this)->GetBlackboardComponent()->SetValueAsBool("InSkillRange", false);
+	}
+}
+
 void ANPC::SetUI(const EMonsterBehavior& behavior)
 {
 	switch (behavior)
@@ -213,12 +240,17 @@ void ANPC::PlayMontageOnBehavior(EMonsterBehavior behavior)
 	case EMonsterBehavior::GOTHIT:
 		PlayAnimMontage(GotHitMontage);
 		break;
+	case EMonsterBehavior::SKILL:
+		PlayAnimMontage(SkillMontage);
+		break;
 	}
 }
 
 bool ANPC::IsPlayingMontage()
 {
-	if (GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage) || GetMesh()->GetAnimInstance()->Montage_IsPlaying(GotHitMontage))
+	if (GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage) 
+		|| GetMesh()->GetAnimInstance()->Montage_IsPlaying(GotHitMontage)
+			|| GetMesh()->GetAnimInstance()->Montage_IsPlaying(SkillMontage))
 		return true;
 	else
 		return false;
@@ -228,19 +260,17 @@ void ANPC::OperateSkillLogic(float deltaTime)
 {
 	if (skillLogic != nullptr)
 	{
-		if (Skill.IsBound())
+		switch (skillType)
 		{
-			skillTime += deltaTime;
-			if (skillTime >= skillCoolTime)
-			{
-				isSkillOnGoing = isSkillOnGoing ? false : true;
-				Skill.Execute(this, isSkillOnGoing);
-				skillTime = 0.f;
-			}
-		}
-		else
-		{
-			skillTime = 0.f;
+		case ESkillType::RANDOM:
+			HitTypeSkill(deltaTime);
+			break;
+		case ESkillType::COOLTIME:
+			CoolTimeTypeSkill(deltaTime);
+			break;
+		case ESkillType::CHARGING:
+			ChargingTypeSkill();
+			break;
 		}
 	}
 }
@@ -260,4 +290,54 @@ void ANPC::CancleSkillLogic()
 
 		ResetSkillTime();
 	}
+}
+
+void ANPC::CoolTimeTypeSkill(float deltaTime)
+{
+	if (Skill.IsBound())
+	{
+		skillTime += deltaTime;
+		if (skillTime >= skillCoolTime)
+		{
+			isSkillOnGoing = isSkillOnGoing ? false : true;
+			Skill.Execute(this, isSkillOnGoing);
+			skillTime = 0.f;
+		}
+	}
+	else
+	{
+		skillTime = 0.f;
+	}
+}
+
+void ANPC::HitTypeSkill(float deltaTime)
+{
+	if (Skill.IsBound())
+	{
+		skillTime += deltaTime;
+		if (triggerSkill)
+		{
+			triggerSkill = false;
+			Skill.Execute(this, true);
+			StopAnimMontage();
+			skillTime = 0.f;
+		}
+		else
+		{
+			if (skillTime >= skillCoolTime)
+			{
+				Skill.Execute(this, false);
+				skillTime = 0.f;
+			}
+		}
+	}
+	else
+	{
+		skillTime = 0.f;
+	}
+}
+
+void ANPC::ChargingTypeSkill()
+{
+
 }

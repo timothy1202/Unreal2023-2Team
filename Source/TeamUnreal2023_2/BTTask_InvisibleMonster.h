@@ -6,7 +6,6 @@
 #include "BTTask_MonsterBase.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/MaterialInterface.h"
-#include "NPC.h"
 #include "BTTask_SkillBase.h"
 #include "BTTask_InvisibleMonster.generated.h"
 
@@ -21,6 +20,8 @@ class TEAMUNREAL2023_2_API UBTTask_InvisibleMonster : public UBTTask_SkillBase
 public:
 	explicit UBTTask_InvisibleMonster(FObjectInitializer const& ObjectInitializer); // 박광훈 - 객체 초기화
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override; //박광훈 - 몬스터 소환 테스크
+
+	/* 음영준 - 부모 클래스인 UBTTask_SkillBase로부터 상속받은 가상 함수들*/
 
 	virtual void UseSkill(UBehaviorTreeComponent& OwnerComp) override;
 	virtual void CancleSkill(UBehaviorTreeComponent& OwnerComp) override;

@@ -3,9 +3,11 @@
 
 #include "BTTask_TeleportingMonster.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "GameFramework/Character.h"
 #include "NPCAIController.h"
 #include "NavigationSystem.h"
+#include "NPC.h"
 
 /// <summary>
 /// 박광훈 - 랜덤위치로 순간이동 테스크 이름
@@ -23,25 +25,54 @@ UBTTask_TeleportingMonster::UBTTask_TeleportingMonster()
 /// <returns></returns>
 EBTNodeResult::Type UBTTask_TeleportingMonster::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    auto ControlledPawn = OwnerComp.GetAIOwner()->GetPawn();
-    if (ControlledPawn == nullptr)
+    // 음영준 - 스킬 사용은 부모 클래스에서
+    if (Super::ExecuteTask(OwnerComp, NodeMemory) == EBTNodeResult::InProgress)
+        return EBTNodeResult::InProgress;
+
+    return EBTNodeResult::Succeeded;
+}
+
+void UBTTask_TeleportingMonster::UseSkill(UBehaviorTreeComponent& OwnerComp)
+{
+    ANPC* npc = Cast<ANPC>(OwnerComp.GetAIOwner()->GetPawn());
+    if (OwnerComp.GetBlackboardComponent()->GetValueAsBool("InSkillRange"))
     {
-        return EBTNodeResult::Failed;
+        // 음영준 - 델리게이트 할당
+        if (npc->Skill.IsBound() == false)
+        {
+            OwnerComp.GetAIOwner()->StopMovement();
+            npc->Skill.BindUFunction(this, FName("TeleportSkill"));
+        }
+    }
+}
+
+void UBTTask_TeleportingMonster::CancleSkill(UBehaviorTreeComponent& OwnerComp)
+{
+    // 음영준 - 취소할 수 있는 스킬이 아니어서 동작 없음
+}
+
+void UBTTask_TeleportingMonster::TeleportSkill(ANPC* npc, bool isTeleport)
+{
+    if (!isTeleport)
+    {
+        float rand = FMath::RandRange(0.f, 100.f);
+
+        if (rand <= triggerPercentage)
+        {
+            npc->SetBehavior(EMonsterBehavior::SKILL);
+            npc->PlayMontageOnBehavior(EMonsterBehavior::SKILL);
+        }
+
+        return;
     }
 
-    UWorld* World = ControlledPawn->GetWorld();
-    if (World == nullptr)
-    {
-        return EBTNodeResult::Failed;
-    }
-
+    UBehaviorTreeComponent* OwnerComp = Cast<UBehaviorTreeComponent>(UAIBlueprintHelperLibrary::GetAIController(npc)->GetBrainComponent());
+    OwnerComp->GetBlackboardComponent()->SetValueAsBool("InAttackRange", false);
+    
     FNavLocation RandomLocation;
-    UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(World);
-    if (NavSystem->GetRandomPointInNavigableRadius(ControlledPawn->GetActorLocation(), 500.0f, RandomLocation))
+    UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+    if (NavSystem->GetRandomPointInNavigableRadius(npc->GetActorLocation(), 500.0f, RandomLocation))
     {
-        ControlledPawn->SetActorLocation(RandomLocation.Location);
-        return EBTNodeResult::Succeeded;
+        npc->SetActorLocation(RandomLocation.Location);
     }
-
-    return EBTNodeResult::Failed;
 }

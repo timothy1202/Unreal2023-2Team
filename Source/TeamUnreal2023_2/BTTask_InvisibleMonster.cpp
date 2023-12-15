@@ -9,6 +9,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/MaterialInterface.h"
 #include "NPCAIController.h"
+#include "NPC.h"
 
 
 
@@ -45,7 +46,7 @@ void UBTTask_InvisibleMonster::CancleSkill(UBehaviorTreeComponent& OwnerComp)
 
 void UBTTask_InvisibleMonster::SetInvisibility(ANPC* npc, bool isSkillOnGoing)
 {
-	// 음영준 - isVisible의 값에 따라 투명화시킬것인지 다시 되돌릴것인지 결정
+	// 음영준 - 스킬이 진행중인지 따라 투명화시킬것인지 다시 되돌릴것인지 결정
 	USkeletalMeshComponent* MeshComponent = npc->GetMesh();
 	if (!isSkillOnGoing)
 	{
