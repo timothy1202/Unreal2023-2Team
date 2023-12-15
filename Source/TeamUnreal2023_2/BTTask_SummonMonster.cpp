@@ -25,7 +25,7 @@ EBTNodeResult::Type UBTTask_SummonMonster::ExecuteTask(UBehaviorTreeComponent& O
 {
     if (ANPCAIController* AIController = Cast<ANPCAIController>(OwnerComp.GetAIOwner()))
     {
-        FVector RelativeLocation = FVector(100.0f, 0.0f, 0.0f); // AI 폰으로부터 x축 방향으로 100 유닛 떨어진 위치
+        FVector RelativeLocation = FVector(200.0f, -50.0f, 0.0f); // AI 폰으로부터 x축 방향으로 100 유닛 떨어진 위치
         FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
 
         // AI 컨트롤러의 폰 위치를 가져옵니다.
@@ -40,17 +40,23 @@ EBTNodeResult::Type UBTTask_SummonMonster::ExecuteTask(UBehaviorTreeComponent& O
         // 폰을 소환합니다.
         if (UWorld* World = AIController->GetWorld()) // AI 컨트롤러를 통해 월드를 얻습니다.
         {
-            ATurretPawn* SpawnedPawn = World->SpawnActor<ATurretPawn>(ATurretPawn::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
-            if (SpawnedPawn)
+            UClass* TurretPawnBP = LoadObject<UClass>(NULL, TEXT("/Game/TurretPawn.TurretPawn_C"));
+
+            if (TurretPawnBP)
             {
-                UE_LOG(LogTemp, Warning, TEXT("몬스터 소환 성공"));
-                return EBTNodeResult::Succeeded;
+                ATurretPawn* SpawnedPawn = World->SpawnActor<ATurretPawn>(TurretPawnBP, SpawnLocation, SpawnRotation, SpawnParams);
+                if (SpawnedPawn)
+                {
+                    return EBTNodeResult::Succeeded;
+                }
             }
         }
     }
 
     return EBTNodeResult::Failed;
 }
+
+
 
 
 
