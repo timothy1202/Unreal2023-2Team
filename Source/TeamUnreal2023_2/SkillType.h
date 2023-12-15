@@ -11,5 +11,6 @@ enum class ESkillType : uint8
 {
 	RANDOM = 0 UMETA(DisplayName = "Random"),
 	COOLTIME UMETA(DisplayName = "CoolTime"),
-	CHARGING UMETA(DisplayName = "Charging")
+	CHARGING UMETA(DisplayName = "Charging"),
+	ONHIT UMETA(DisplayName = "OnHit")
 };

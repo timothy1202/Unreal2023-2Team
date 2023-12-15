@@ -8,7 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/MaterialInterface.h"
-#include "NPCAIController.h"
+#include "AIController.h"
 #include "NPC.h"
 
 

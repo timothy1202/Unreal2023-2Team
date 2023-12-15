@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "BTTask_MonsterBase.h"
+#include "BTTask_SkillBase.h"
 #include "BTTask_HackingMonster.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEAMUNREAL2023_2_API UBTTask_HackingMonster : public UBTTask_MonsterBase
+class TEAMUNREAL2023_2_API UBTTask_HackingMonster : public UBTTask_SkillBase
 {
 	GENERATED_BODY()
 
@@ -18,13 +19,12 @@ public:
 	explicit UBTTask_HackingMonster(FObjectInitializer const& ObjectInitializer); // ¹Ú±¤ÈÆ - °´Ã¼ ÃÊ±âÈ­
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override; //¹Ú±¤ÈÆ - ¸ó½ºÅÍ ¼ÒÈ¯ Å×½ºÅ©
 	
-	UFUNCTION()
-	void SetHacking(class ANPC* npc, bool isHack);
+	virtual void UseSkill(UBehaviorTreeComponent& OwnerComp) override;
+	virtual void CancleSkill(UBehaviorTreeComponent& OwnerComp) override;
 
 	UFUNCTION()
-	void AbletoHack();
+	void SetHacking(ANPC* npc, bool isHack);
 
-	UFUNCTION()
-	void StopHacking();
-
+	void AbleToHack(ANPC* npc);
+	void StopHacking(ANPC* npc);
 };

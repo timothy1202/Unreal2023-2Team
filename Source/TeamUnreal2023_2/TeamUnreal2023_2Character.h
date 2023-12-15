@@ -177,7 +177,7 @@ protected:
 
 	// 음영준 - Focus기능이 탑재된 함수(Focus Action에 바인딩 됨)
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = Input)
-		void Focus();
+	void Focus();
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
