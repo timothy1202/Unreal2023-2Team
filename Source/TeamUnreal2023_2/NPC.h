@@ -97,6 +97,9 @@ private:
 	// 음영준 - 트리거용 스킬에 사용
 	bool triggerSkill = false;
 
+	// 음영준 - 온힛 트리거용 스킬에 사용
+	bool onHitTriggerSkill = false;
+
 	// 음영준 - Anim Instance의 Fighting Idle을 활성화 시킬지에 대한 값으로서 활용
 	bool isFindPlayer = false;
 
@@ -171,10 +174,12 @@ public:
 
 	// 음영준 - 쿨타임 스킬
 	void CoolTimeTypeSkill(float deltaTime);
-	// 음영준 - 피격시 일어나는 스킬
-	void HitTypeSkill(float deltaTime);
+	// 음영준 - 랜덤으로 나타나는 스킬
+	void RandomTypeSkill(float deltaTime);
 	// 음영준 - 차징 스킬
-	void ChargingTypeSkill();
+	void ChargingTypeSkill(float deltaTime);
+	// 음영준 - 온힛 스킬 (맞았을 때 일어나는 스킬)
+	void OnHitTypeSkill(float deltaTime);
 
 	// Setter함수들
 

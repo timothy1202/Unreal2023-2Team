@@ -168,11 +168,6 @@ void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedCo
 			GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
 		}
 	}
-	else
-	{
-
-	}
-
 }
 
 /// <summary>

@@ -161,38 +161,12 @@ void ANPC::OnBeginOverlapAttack(UPrimitiveComponent* OverlappedComp, AActor* Oth
 
 			//음영준 - 만약 스킬 로직을 가지고 있는 AI라면 스킬 취소 및 스킬 쿨타임도 초기화
 			CancleSkillLogic();
+
+			onHitTriggerSkill = true;
 			if (GotHitMontage)
 			{
 				SetBehavior(EMonsterBehavior::GOTHIT);
 				PlayMontageOnBehavior(EMonsterBehavior::GOTHIT);
-
-				// IsPlayerHacked()를 참으로 세팅합니다.
-				PlayerInstance->SetPlayerHacked(true);
-
-				ATeamUnreal2023_2Character* MyCharacterInstance = Cast<ATeamUnreal2023_2Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-				// 인스턴스가 유효한지 확인합니다.
-				if (MyCharacterInstance)
-				{
-					// 해당 인스턴스의 함수를 호출합니다.
-					MyCharacterInstance->ChangeHackedPlayerToInvisible();
-				}
-
-				// FTimerHandle 인스턴스를 생성합니다.
-				FTimerHandle TimerHandle;
-
-				// 3초 뒤에 SetPlayerHacked() 함수를 호출하여 값을 거짓으로 바꿉니다.
-				GetWorld()->GetTimerManager().SetTimer(TimerHandle, [PlayerInstance, MyCharacterInstance]()
-					{
-						if (PlayerInstance)
-						{
-							PlayerInstance->SetPlayerHacked(false);
-						}
-						if (MyCharacterInstance)
-						{
-							MyCharacterInstance->RestoreOriginalMaterial();
-						}
-					}, 3.0f, false);
 			}
 		}
 	}
@@ -300,13 +274,16 @@ void ANPC::OperateSkillLogic(float deltaTime)
 		switch (skillType)
 		{
 		case ESkillType::RANDOM:
-			HitTypeSkill(deltaTime);
+			RandomTypeSkill(deltaTime);
 			break;
 		case ESkillType::COOLTIME:
 			CoolTimeTypeSkill(deltaTime);
 			break;
 		case ESkillType::CHARGING:
-			ChargingTypeSkill();
+			ChargingTypeSkill(deltaTime);
+			break;
+		case ESkillType::ONHIT:
+			OnHitTypeSkill(deltaTime);
 			break;
 		}
 	}
@@ -329,6 +306,7 @@ void ANPC::CancleSkillLogic()
 	}
 }
 
+// 음영준 - 쿨타임 스킬을 가지는 몬스터의 스킬로직 정의
 void ANPC::CoolTimeTypeSkill(float deltaTime)
 {
 	if (Skill.IsBound())
@@ -347,7 +325,8 @@ void ANPC::CoolTimeTypeSkill(float deltaTime)
 	}
 }
 
-void ANPC::HitTypeSkill(float deltaTime)
+// 음영준 - 랜덤 실행 스킬을 가지는 몬스터의 스킬로직 정의
+void ANPC::RandomTypeSkill(float deltaTime)
 {
 	if (Skill.IsBound())
 	{
@@ -374,7 +353,36 @@ void ANPC::HitTypeSkill(float deltaTime)
 	}
 }
 
-void ANPC::ChargingTypeSkill()
+// 음영준 - 차징 스킬을 가지는 몬스터의 스킬로직 정의
+void ANPC::ChargingTypeSkill(float deltaTime)
 {
 
+}
+
+// 음영준 - 온힛 스킬을 가지는 몬스터의 스킬로직 정의
+void ANPC::OnHitTypeSkill(float deltaTime)
+{
+	if (Skill.IsBound())
+	{
+		if (onHitTriggerSkill)
+		{
+			onHitTriggerSkill = false;
+			skillTime = skillCoolTime;
+		}
+
+		if (skillTime <= 0.f)
+		{
+			Skill.Execute(this, false);
+		}
+		else if (skillTime >= skillCoolTime)
+		{
+			Skill.Execute(this, true);
+		}
+
+		skillTime -= deltaTime;
+	}
+	else
+	{
+		skillTime = -1.f;
+	}
 }
