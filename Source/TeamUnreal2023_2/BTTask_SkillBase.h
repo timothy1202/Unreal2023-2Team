@@ -23,6 +23,6 @@ protected:
 	virtual void CancleSkill(UBehaviorTreeComponent& OwnerComp);
 
 public:
-	// 음영준 - 플레이어가 시야를 벗어나면 스킬 사용 취소 -> CoolType 스킬에만 적용됨
+	// 음영준 - 플레이어가 시야를 벗어나면 스킬 사용 취소 -> CoolTimeType 스킬에만 적용됨
 	void CancleSkillOnFailPerception(UBehaviorTreeComponent& OwnerComp);
 };

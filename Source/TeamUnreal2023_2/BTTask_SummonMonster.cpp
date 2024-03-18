@@ -37,6 +37,7 @@ void UBTTask_SummonMonster::UseSkill(UBehaviorTreeComponent& OwnerComp)
 		{
 			OwnerComp.GetAIOwner()->StopMovement();
 			OwnerComp.GetAIOwner()->SetFocus(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			npc->SetBehavior(EMonsterBehavior::SKILL);
 			npc->PlayMontageOnBehavior(EMonsterBehavior::SKILL);
 			npc->Skill.BindUFunction(this, FName("Summon"));
 		}
