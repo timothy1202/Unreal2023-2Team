@@ -6,6 +6,7 @@
 #include "NavigationSystem.h"
 #include "MonsterBehavior.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "NPCAIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 
@@ -57,12 +58,12 @@ void UBTTask_SummonMonster::Summon(ANPC* npc, bool isRight)
 {
 	FRotator SpawnRotation = npc->GetActorRotation();
 	FVector AILocation = npc->GetActorLocation();
-	FVector RelativeLocation = FVector(0.0f, 200.0f, 0.0f);
-	RelativeLocation = isRight ? RelativeLocation : -RelativeLocation;
-	FVector SpawnLocation = AILocation + RelativeLocation;
+	float Offset = 200.0f;
+	Offset = isRight ? Offset : -Offset;
+	FVector SpawnLocation = AILocation + (npc->GetActorRightVector() * Offset);
 
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	ATurretPawn* SpawnedPawn = GetWorld()->SpawnActor<ATurretPawn>(turret_BP, SpawnLocation, SpawnRotation, SpawnParams);
 }

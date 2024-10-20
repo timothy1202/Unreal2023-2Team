@@ -95,15 +95,14 @@ void ANPCAIController::SetupPerceptionSystem()
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
 	if (SightConfig)
 	{
-		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(
-			TEXT("Perception Component")));
+		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
 		SightConfig->SightRadius = 500.f; // 감지 구역범위
 		SightConfig->LoseSightRadius = SightConfig->SightRadius + 25.f; // npc가 플레이어가 그만 보기시작하는 범위
 		SightConfig->PeripheralVisionAngleDegrees = 90.f; //npc가 정면만 볼수있게
 		SightConfig->SetMaxAge(5.f);
 		SightConfig->AutoSuccessRangeFromLastSeenLocation = 520.f; //계속 볼수있게 필요한 최소 거리?
 		SightConfig->DetectionByAffiliation.bDetectEnemies = true; // 적 판단
-		SightConfig->DetectionByAffiliation.bDetectFriendlies = true; // 아군 판단
+		SightConfig->DetectionByAffiliation.bDetectFriendlies = false; // 아군 판단
 		SightConfig->DetectionByAffiliation.bDetectNeutrals = true; // 중립 판단
 
 		GetPerceptionComponent()->SetDominantSense(*SightConfig->GetSenseImplementation());
@@ -112,13 +111,26 @@ void ANPCAIController::SetupPerceptionSystem()
 	}
 }
 
-void ANPCAIController::MakeIsInvisibleFalse(bool what)
+void ANPCAIController::MakeIsInvisible(bool isInvisible)
 {
-	GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", !what);
-	controlledPawn->SetIsFindPlayer(!what);
+	// 플레이어가 인지 범위 내에 있을때
+	if (SensedPlayer)
+	{
+		// 플레이어 투명 여부에 따라 로직 결정
+		if (!isInvisible)
+		{
+			GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", true);
+			controlledPawn->SetIsFindPlayer(true);
+		}
+		else
+		{
+			GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", false);
+			controlledPawn->SetIsFindPlayer(false);
 
-	// 음영준 - 스킬 사용 취소
-	CancleNPCSkill();
+			// 음영준 - 스킬 사용 취소
+			CancleNPCSkill();
+		}
+	}
 }
 
 /// <summary>
@@ -128,14 +140,16 @@ void ANPCAIController::MakeIsInvisibleFalse(bool what)
 /// <param name="Stimulus"></param>
 void ANPCAIController::OnTargetDetected(AActor* Actor, FAIStimulus const Stimulus)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Success!!!"))
 	//플레이어가 보이는 지
 	if (ATeamUnreal2023_2Character* const ch = Cast<ATeamUnreal2023_2Character>(Actor))
 	{
 		// 음영준 - 플레이어 감지 성공 여부를 저장
 		bool Sensed = Stimulus.WasSuccessfullySensed();
+		SensedPlayer = Sensed;
 
 		// 박광훈 - 플레이어가 투명인지에 따른 감지 유무
-		if (ch->GetIsInvisible() == true)	Sensed = false;
+		if (ch->GetIsInvisible() == true)	return;
 
 		// 음영준 - 플레이어가 보이는지 안보이는지에 따라 IsFindPlayer의 Bool값 설정
 		if (Sensed)

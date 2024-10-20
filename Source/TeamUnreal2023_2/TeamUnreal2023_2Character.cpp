@@ -162,8 +162,7 @@ void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedCo
 		if (OtherComp->ComponentHasTag("InvisibleMarble"))
 		{
 			IsInvisible = true;
-
-			UpdateInvisible(IsInvisible);
+			UpdateInvisible(true);
 			ChangeMaterialToInvisible();
 			GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &ATeamUnreal2023_2Character::DelayPlay, 3.f, false);
 		}
@@ -176,7 +175,7 @@ void ATeamUnreal2023_2Character::HandleOverlap(UPrimitiveComponent* OverlappedCo
 void ATeamUnreal2023_2Character::DelayPlay()
 {
 	IsInvisible = false;
-	UpdateInvisible(IsInvisible);
+	UpdateInvisible(false);
 	RestoreOriginalMaterial();
 }
 
@@ -244,7 +243,7 @@ void ATeamUnreal2023_2Character::AttackCollisionDisable()
 /// 박광훈 - 모든 액터들의 투명화 적용
 /// </summary>
 /// <param name="isVisible"></param>
-void ATeamUnreal2023_2Character::UpdateInvisible(bool isVisible)
+void ATeamUnreal2023_2Character::UpdateInvisible(bool bInvisible)
 {
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANPC::StaticClass(), OutActors);
@@ -252,7 +251,7 @@ void ATeamUnreal2023_2Character::UpdateInvisible(bool isVisible)
 	{
 		ANPC* anpc = Cast<ANPC>(outActor);
 		ANPCAIController* npcAIControllerClass = Cast<ANPCAIController>(UAIBlueprintHelperLibrary::GetAIController(anpc));
-		npcAIControllerClass->MakeIsInvisibleFalse(isVisible);
+		npcAIControllerClass->MakeIsInvisible(bInvisible);
 	}
 }
 

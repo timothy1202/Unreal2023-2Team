@@ -20,6 +20,8 @@ class TEAMUNREAL2023_2_API ANPCAIController : public AAIController
 private:
 	// 음영준 - AIController의 행동(Behavior) Enum -> 이 Enum을 통해 AI의 행동을 검사
 	EMonsterBehavior behavior;
+	
+	bool SensedPlayer = false;
 
 	// 음영준 - AIController가 조종하는 AI레퍼런스
 	class ANPC* controlledPawn;
@@ -58,7 +60,7 @@ public:
 	void RunSkillBT();
 
 	virtual void Tick(float DeltaTime) override;
-	void MakeIsInvisibleFalse(bool what);
+	void MakeIsInvisible(bool isInvisible);
 
 
 	/// <summary>
